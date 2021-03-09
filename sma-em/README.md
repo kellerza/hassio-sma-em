@@ -1,6 +1,6 @@
-# Home Assistant SMA Add-On
+# SMA Energy Meter Add-On
 
-An addon to receive SMA Energymeter measurement values and push them to HomeAssistant through MQTT. Support auto-discovery for the sensors. Uses the [SMA-EM](https://github.com/datenschuft/SMA-EM) library.
+An add-on to receive SMA Energy Meter measurements and push them to Home Assistant through MQTT. Support auto-discovery for the sensors. Uses the [SMA-EM](https://github.com/datenschuft/SMA-EM) library.
 
 Requires Home Assistant and a configured MQTT server
 
