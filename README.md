@@ -8,7 +8,7 @@ See the addon [README.md](sma-em/README.md) or [DOCS.md](sma-em/DOCS.md)
 
 ## Install
 
-1. Add the following repository to your supervisor [![My: Add Repository](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fhassio-addons%2Frepository)
+1. Add the following repository to your supervisor [![My: Add Repository](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fkellerza%2Fhassio-sma-em)
 
     ```
     https://github.com/kellerza/hassio-sma-em
