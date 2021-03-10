@@ -31,25 +31,27 @@ SENSOR_MAP = {
 
 
 def sensor(client, sma_id, field):
-    unique_id = f"{sma_id}_{field}"
-    state_t = f"SMA-EM/status/{sma_id}/{field}"
-
     smap = SENSOR_MAP.get(field, ("energy", ""))
-
-    topic = f"homeassistant/sensor/{unique_id}/config"
+    topic = f"homeassistant/sensor/{sma_id}/{field}/config"
     payload = dumps(
         {
             "name": field,
-            "device_class": smap[0],
-            "state_topic": state_t,
-            "unit_of_measurement": smap[1],
-            "uniq_id": unique_id,
+            "dev_cla": smap[0],
+            "stat_t": f"SMA-EM/status/{sma_id}/{field}",
+            "unit_of_meas": smap[1],
+            "uniq_id": f"{sma_id}_{field}",
+            "dev": {
+                "ids": [f"sma_em_{sma_id}"],
+                "name": "SMA Energy Meter",
+                "mdl": "Energy Meter",
+                "mf": "SMA",
+            },
         }
     )
 
     ic(topic, payload)
     print("")
-    client.publish(topic, payload)
+    client.publish(topic, payload, retain=True)
 
 
 def discover_all(opt):
@@ -71,12 +73,12 @@ def discover_all(opt):
 def main():
     # Read the hassos configuration
     options = loads(Path("/data/options.json").read_text())
-    
+
     if not options.get(SERIALS):
         ic("No SMA_SERIALS configured, capturing a SINGLE debug packet")
         os.system("./sma-em-capture-package.py | grep serial")
         while True:
-           pass
+            pass
 
     # options[FIELDS] = "pconsume,pconsumecounter"
     # Read the template
