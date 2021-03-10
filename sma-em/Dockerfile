@@ -5,9 +5,8 @@ RUN pip3 install --no-cache-dir paho-mqtt~=1.5.0 requests~=2.24.0 icecream
 
 RUN set -ex \
     && ping dl-cdn.alpinelinux.org -c 4 \
-    && apk add --no-cache --virtual .fetch-deps \
-        git \
-    && apk del .fetch-deps
+    && apk add --no-cache \
+        git
 
 # VOLUME /data
 RUN mkdir -p /usr/src/app
