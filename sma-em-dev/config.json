@@ -32,8 +32,8 @@
     "MQTT_PORT": "port",
     "MQTT_USERNAME": "str",
     "MQTT_PASSWORD": "password",
-    "SMA_SERIALS": "[str]",
-    "FIELDS": "[str]",
+    "SMA_SERIALS": ["str"],
+    "FIELDS": ["str"],
     "DEBUG": "bool"
   }
 }
