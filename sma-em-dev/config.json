@@ -25,6 +25,7 @@
     "MQTT_PASSWORD": "my_very_secure_password",
     "SMA_SERIALS": [],
     "FIELDS": ["pconsume","pconsumecounter:max","u1"],
+    "THRESHOLD": 80,
     "DEBUG": 0
   },
   "schema": {
@@ -34,6 +35,7 @@
     "MQTT_PASSWORD": "password",
     "SMA_SERIALS": ["str"],
     "FIELDS": ["str"],
+    "THRESHOLD": "int(10,1000)",
     "DEBUG": "bool"
   }
 }
