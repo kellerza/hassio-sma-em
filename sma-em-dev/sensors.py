@@ -162,10 +162,11 @@ def get_sensors(*, definition: str, emparts: dict):
 
 def startup():
     """Read the hassos configuration."""
-    try:
-        options = loads(Path("/data/options.json").read_text())
-    except FileNotFoundError:
-        options = {
+    ofile = Path("/data/options.json")
+    options = (
+        loads(ofile.read_text())
+        if ofile.exists()
+        else {
             MQTT_HOST: "192.168.88.128",
             MQTT_PASSWORD: sys.argv[1],
             MQTT_PORT: 1883,
@@ -175,6 +176,7 @@ def startup():
             THRESHOLD: 80,
             "DEBUG": 0,
         }
+    )
     for key, val in options.items():
         OPTIONS[key] = val
 
