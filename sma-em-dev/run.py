@@ -14,7 +14,7 @@ from icecream import ic
 from speedwiredecoder import decode_speedwire
 
 MCAST_GROUP = "239.12.255.254"
-MCAST_PORT = "9522"
+MCAST_PORT = 9522
 BIND_IP = "0.0.0.0"
 
 MQTT_HOST = "MQTT_HOST"
@@ -180,9 +180,8 @@ def main():
                         ha_discover_all(client, sensors[serial], serial)
                     process_sensors(client, emparts, sensors[serial])
             except Exception as err:
-                print("Daemon: Exception occurred")
+                print("Daemon: Exception occurred", err)
                 print(traceback.format_exc())
-                print(err)
                 return  # will attempt to rebind the socket
 
 
