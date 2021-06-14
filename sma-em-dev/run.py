@@ -87,7 +87,7 @@ def hass_device_class(name):
     return "power"
 
 
-def hass_discover_sensor(client, sma_id, field):
+def hass_discover_sensor(*, client, sma_id, field):
     smap = ("", "", "")  # SENSOR_MAP.get(field, ("energy", ""))
     topic = f"homeassistant/sensor/{sma_id}/{field}/config"
     payload = dumps(
@@ -109,13 +109,6 @@ def hass_discover_sensor(client, sma_id, field):
     ic(topic, payload)
     print("")
     client.publish(topic, payload, retain=True)
-
-
-def ha_discover_all(client, opt):
-    print("Homeassistant Auto-discovery:")
-    for sma_id in opt[SERIALS].split(" "):
-        for field in opt[FIELDS].split(","):
-            hass_discover_sensor(client, sma_id, field)
 
 
 @attr.define
@@ -177,7 +170,10 @@ def main():
                     serial = emparts["serial"]
                     if not sensors.get(serial):
                         sensors[serial] = get_sensors(options[FIELDS], emparts)
-                        ha_discover_all(client, sensors[serial], serial)
+                        for sen in sensors[serial]:
+                            hass_discover_sensor(
+                                client=client, sma_id=serial, field=sen.name
+                            )
                     process_sensors(client, emparts, sensors[serial])
             except Exception as err:
                 print("Daemon: Exception occurred", err)
