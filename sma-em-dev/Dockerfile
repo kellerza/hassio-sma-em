@@ -11,9 +11,9 @@ RUN set -ex \
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-RUN git clone https://github.com/datenschuft/SMA-EM.git .
+# RUN git clone https://github.com/datenschuft/SMA-EM.git .
 
-COPY config.ini run.py ./
+COPY config.ini *.py ./
 
 # CMD ["tail", "-f", "/dev/null"]
 CMD ["./run.py"]
