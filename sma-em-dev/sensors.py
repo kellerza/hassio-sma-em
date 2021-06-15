@@ -1,5 +1,6 @@
 """Run the energy meter."""
 import asyncio
+import logging
 import statistics
 import sys
 import time
@@ -10,6 +11,8 @@ from typing import Any, Dict, Sequence
 import attr
 from icecream import ic
 from mqtt import MQTTClient
+
+_LOGGER = logging.getLogger(__name__)
 
 
 @attr.define
@@ -68,12 +71,14 @@ async def process_emparts(emparts: dict):
     serial = emparts["serial"]
     if not SENSORS.get(serial):
         SENSORS[serial] = get_sensors(definition=OPTIONS[FIELDS], emparts=emparts)
-        await mqtt_publish("", None)
-        print(
-            f"Discover {len(SENSORS[serial])}/{len(OPTIONS[FIELDS])} sensors on SMA:{serial}"
+        _LOGGER.info(
+            "Discover %s/%s sensors on SMA %s",
+            len(SENSORS[serial]),
+            len(OPTIONS[FIELDS]),
+            serial,
         )
         for sen in SENSORS[serial]:
-            print(f" - {sen.id} every {sen.interval}s")
+            _LOGGER.info(" - %s every %ss", sen.id, sen.interval)
             await hass_discover_sensor(sma_id=serial, sensor=sen)
         await asyncio.sleep(5)
 
@@ -161,7 +166,7 @@ def get_sensors(*, definition: str, emparts: dict):
         name, _, mod = sensor_def.partition(":")
 
         if name not in emparts:
-            print("Unknown sensor", name)
+            _LOGGER.info("Unknown sensor: %s", name)
             continue
 
         sen = SWSensor(name=name, mod=mod, unit=emparts.get(f"{name}unit"))

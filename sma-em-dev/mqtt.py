@@ -1,8 +1,11 @@
 """MQTT helper."""
 import asyncio
+import logging
 from typing import Any
 
 from paho.mqtt.client import Client
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class MQTTClient:
@@ -18,13 +21,14 @@ class MQTTClient:
                 4: "refused - bad username or password",
                 5: "refused - not authorised",
             }.get(rc, f"refused - {rc}")
-            print(f"MQTT: Connection {msg}")
+            _LOGGER.info("MQTT: Connection %s", msg)
 
         self._client.on_connect = on_connect
 
     async def connect(self, host, port, username, password):
         """Connect."""
         if not self._client.is_connected():
+            _LOGGER.info("Connecting")
             self._client.username_pw_set(username=username, password=password)
             self._client.connect_async(host=host, port=port)
             self._client.loop_start()
