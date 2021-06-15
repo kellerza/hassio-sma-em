@@ -8,8 +8,8 @@ from pathlib import Path
 from typing import Any, Dict, Sequence
 
 import attr
-from asyncio_mqtt import Client
 from icecream import ic
+from mqtt import MQTTClient
 
 
 @attr.define
@@ -25,10 +25,18 @@ class SWSensor:
     unit = attr.field(default=None)
     device_class = attr.field(default=None)
 
+    @property
+    def id(self):
+        if self.mod == "":
+            return self.name
+        if self.mod == "avg":
+            return f"{self.name}_{self.interval}"
+        return f"{self.name}_{self.mod}"
+
 
 SENSORS: Dict[str, Sequence[SWSensor]] = {}
 OPTIONS: Dict[str, Any] = {}
-MQTT: Client = None
+_MQTT = MQTTClient()
 
 
 MQTT_HOST = "MQTT_HOST"
@@ -38,16 +46,36 @@ MQTT_PASSWORD = "MQTT_PASSWORD"
 SERIALS = "SMA_SERIALS"
 FIELDS = "FIELDS"
 THRESHOLD = "THRESHOLD"
+DEBUG = "DEBUG"
 
 SMA_EM_TOPIC = "SMA-EM/status"
+
+
+async def mqtt_publish(topic: str, payload: Any, retain: bool = False):
+    await _MQTT.connect(
+        username=OPTIONS[MQTT_USERNAME],
+        password=OPTIONS[MQTT_PASSWORD],
+        host=OPTIONS[MQTT_HOST],
+        port=OPTIONS[MQTT_PORT],
+    )
+    if not topic:
+        return
+    ic(topic, payload)
+    await _MQTT.publish(topic=topic, payload=payload, retain=retain)
 
 
 async def process_emparts(emparts: dict):
     serial = emparts["serial"]
     if not SENSORS.get(serial):
         SENSORS[serial] = get_sensors(definition=OPTIONS[FIELDS], emparts=emparts)
+        await mqtt_publish("", None)
+        print(
+            f"Discover {len(SENSORS[serial])}/{len(OPTIONS[FIELDS])} sensors on SMA:{serial}"
+        )
         for sen in SENSORS[serial]:
-            await hass_discover_sensor(sma_id=serial, field=sen.name)
+            print(f" - {sen.id} every {sen.interval}s")
+            await hass_discover_sensor(sma_id=serial, sensor=sen)
+        await asyncio.sleep(5)
 
     push_later = []
     now = int(time.time())
@@ -80,10 +108,7 @@ async def process_emparts(emparts: dict):
             sen.value = round(statistics.mean(sen.values), 1)
         sen.values = []
 
-        ic(sen.name, sen.value)
-        await MQTT.publish(
-            f"{SMA_EM_TOPIC}/{emparts['serial']}/{sen.name}{sen.mod}", sen.value
-        )
+        await mqtt_publish(f"{SMA_EM_TOPIC}/{emparts['serial']}/{sen.id}", sen.value)
 
     if not push_later:
         return
@@ -92,33 +117,32 @@ async def process_emparts(emparts: dict):
     for sen, val, delta in push_later:
         sen.value = round(val, 1)
         ic(sen.name, sen.value, delta)
-        await MQTT.publish(
-            f"{SMA_EM_TOPIC}/{emparts['serial']}/{sen.name}{sen.mod}", sen.value
-        )
+        await mqtt_publish(f"{SMA_EM_TOPIC}/{emparts['serial']}/{sen.id}", sen.value)
 
 
 # device_calss:current/energy/power
 # unit_of_measurement
-def hass_device_class(name: str):
-    if name.endswith("counter"):
-        return "energy"
-    if name.startswith("u"):
-        return "voltage"
-    if name.endswith("frequency"):
-        return None
-    return "power"
+def hass_device_class(*, unit: str):
+    return {
+        "W": "power",
+        "kW": "power",
+        "kVA": "power",
+        "V": "voltage",
+        "Hz": None,
+    }.get(
+        unit, "energy"
+    )  # kwh, kVa,
 
 
-async def hass_discover_sensor(*, sma_id: str, field: str):
-    smap = ("", "", "")  # SENSOR_MAP.get(field, ("energy", ""))
-    topic = f"homeassistant/sensor/{sma_id}/{field}/config"
+async def hass_discover_sensor(*, sma_id: str, sensor: SWSensor):
+    topic = f"homeassistant/sensor/{sma_id}/{sensor.id}/config"
     payload = dumps(
         {
-            "name": field,
-            "dev_cla": smap[0],
-            "stat_t": f"{SMA_EM_TOPIC}/{sma_id}/{field}",
-            "unit_of_meas": smap[1],
-            "uniq_id": f"{sma_id}_{field}",
+            "name": sensor.name,
+            "dev_cla": sensor.device_class,
+            "stat_t": f"{SMA_EM_TOPIC}/{sma_id}/{sensor.id}",
+            "unit_of_meas": sensor.unit,
+            "uniq_id": f"{sma_id}_{sensor.id}",
             "dev": {
                 "ids": [f"sma_em_{sma_id}"],
                 "name": "SMA Energy Meter",
@@ -128,10 +152,7 @@ async def hass_discover_sensor(*, sma_id: str, field: str):
         }
     )
 
-    ic(topic, payload)
-    print("")
-    await MQTT.connect()
-    await MQTT.publish(topic, payload, retain=True)
+    await mqtt_publish(topic, payload, retain=True)
 
 
 def get_sensors(*, definition: str, emparts: dict):
@@ -153,7 +174,7 @@ def get_sensors(*, definition: str, emparts: dict):
             except ValueError:
                 sen.mod = ""
                 sen.interval = 60
-        sen.device_class = hass_device_class(name)
+        sen.device_class = hass_device_class(unit=sen.unit)
         res.append(sen)
 
     ic(res)
@@ -172,18 +193,23 @@ def startup():
             MQTT_PORT: 1883,
             MQTT_USERNAME: "hass",
             SERIALS: [],
-            FIELDS: ["pconsume"],
+            FIELDS: [
+                "pconsume",
+                "pconsumecounter:max",
+                "pconsume:5",
+                "u1:min",
+            ],
             THRESHOLD: 80,
-            "DEBUG": 0,
+            DEBUG: 0,
         }
     )
     for key, val in options.items():
         OPTIONS[key] = val
 
-    global MQTT
-    MQTT = Client(
-        hostname=OPTIONS[MQTT_HOST],
-        port=OPTIONS[MQTT_PORT],
-        username=OPTIONS[MQTT_USERNAME],
-        password=OPTIONS[MQTT_PASSWORD],
-    )
+    if OPTIONS[DEBUG] == 0:
+
+        def blank(*args):
+            pass
+
+        global ic
+        ic = blank
