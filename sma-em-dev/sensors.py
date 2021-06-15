@@ -143,7 +143,7 @@ async def hass_discover_sensor(*, sma_id: str, sensor: SWSensor):
     topic = f"homeassistant/sensor/{sma_id}/{sensor.id}/config"
     payload = dumps(
         {
-            "name": sensor.name,
+            "name": sensor.id,
             "dev_cla": sensor.device_class,
             "stat_t": f"{SMA_EM_TOPIC}/{sma_id}/{sensor.id}",
             "unit_of_meas": sensor.unit,

@@ -27,8 +27,9 @@ class MulticastServerProtocol(asyncio.DatagramProtocol):
 
 def main():
     sensors.startup()
-    if sensors.OPTIONS["DEBUG"] != 0:
-        logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(
+        level=logging.DEBUG if sensors.OPTIONS["DEBUG"] != 0 else logging.INFO
+    )
 
     LOOP = asyncio.get_event_loop()
     LOOP.set_debug(True)
