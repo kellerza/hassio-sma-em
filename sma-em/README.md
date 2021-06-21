@@ -1,5 +1,7 @@
 # SMA Energy Meter Add-On
 
-An add-on to receive SMA Energy Meter measurements and push them to Home Assistant through MQTT. Support auto-discovery for the sensors. 
+An add-on to receive SMA Energy Meter measurements and push them to Home Assistant through MQTT.
 
-Uses the [SMA-EM](https://github.com/datenschuft/SMA-EM) library.
+It supports Home Assistant auto-discovery for the sensors and modifiers on reading intervals. See the docs for more info.
+
+This integration uses the Speedwire decoder from the [SMA-EM](https://github.com/datenschuft/SMA-EM) project.

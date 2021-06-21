@@ -2,7 +2,7 @@
   "name": "SMA Energy Meter",
   "slug": "sma-em",
   "description": "Add-on for the SMA Energy meter",
-  "version": "0.5.4",
+  "version": "0.6",
   "startup": "services",
   "boot": "auto",
   "url": "https://github.com/kellerza/hassio-sma-em",
@@ -23,8 +23,9 @@
     "MQTT_PORT": 1883,
     "MQTT_USERNAME": "hass",
     "MQTT_PASSWORD": "my_very_secure_password",
-    "SMA_SERIALS": "",
-    "FIELDS": "pconsume,pconsumecounter,u1",
+    "SMA_SERIALS": [],
+    "FIELDS": ["pconsume","pconsumecounter:max","u1"],
+    "THRESHOLD": 80,
     "DEBUG": 0
   },
   "schema": {
@@ -32,8 +33,9 @@
     "MQTT_PORT": "port",
     "MQTT_USERNAME": "str",
     "MQTT_PASSWORD": "password",
-    "SMA_SERIALS": "str?",
-    "FIELDS": "str",
-    "DEBUG": "int"
+    "SMA_SERIALS": ["str"],
+    "FIELDS": ["str"],
+    "THRESHOLD": "int(10,1000)",
+    "DEBUG": "bool"
   }
 }
