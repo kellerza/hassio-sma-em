@@ -10,7 +10,6 @@ from speedwiredecoder import decode_speedwire
 
 BROADCAST_ADDR = "239.12.255.254"
 BROADCAST_PORT = 9522
-RECONNECT_INTERVAL = 180
 
 _LOGGER = logging.getLogger(__name__)
 
