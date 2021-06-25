@@ -26,6 +26,7 @@
     "SMA_SERIALS": [],
     "FIELDS": ["pconsume","pconsumecounter:max","u1"],
     "THRESHOLD": 80,
+    "RECONNECT_INTERVAL": 86400,
     "DEBUG": 0
   },
   "schema": {
@@ -36,6 +37,7 @@
     "SMA_SERIALS": ["str"],
     "FIELDS": ["str"],
     "THRESHOLD": "int(10,1000)",
+    "RECONNECT_INTERVAL": "int(60,86400)",
     "DEBUG": "bool"
   }
 }

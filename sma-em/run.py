@@ -14,7 +14,6 @@ RECONNECT_INTERVAL = 180
 
 _LOGGER = logging.getLogger(__name__)
 
-
 class MulticastServerProtocol(asyncio.DatagramProtocol):
     def connection_made(self, _transport):
         pass
@@ -45,6 +44,8 @@ async def main():
 
     LOOP = asyncio.get_event_loop()
     LOOP.set_debug(True)
+
+    RECONNECT_INTERVAL = sensors.OPTIONS["RECONNECT_INTERVAL"]
 
     while True:
         _sock = connect_socket()
