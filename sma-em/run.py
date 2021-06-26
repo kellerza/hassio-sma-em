@@ -44,7 +44,7 @@ async def main():
     LOOP = asyncio.get_event_loop()
     LOOP.set_debug(True)
 
-    RECONNECT_INTERVAL = sensors.OPTIONS["RECONNECT_INTERVAL"]
+    RECONNECT_INTERVAL = sensors.OPTIONS.get(sensors.RECONNECT_INTERVAL, 86400)
 
     while True:
         _sock = connect_socket()
