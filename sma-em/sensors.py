@@ -206,7 +206,7 @@ def startup():
                 "u1:min",
             ],
             THRESHOLD: 80,
-            RECONNECT_INTERVAL: 0,
+            RECONNECT_INTERVAL: 86400,
             DEBUG: 0
         }
     )
