@@ -50,6 +50,7 @@ SERIALS = "SMA_SERIALS"
 FIELDS = "FIELDS"
 THRESHOLD = "THRESHOLD"
 DEBUG = "DEBUG"
+RECONNECT_INTERVAL = "RECONNECT_INTERVAL"
 
 SMA_EM_TOPIC = "SMA-EM/status"
 
@@ -205,7 +206,8 @@ def startup():
                 "u1:min",
             ],
             THRESHOLD: 80,
-            DEBUG: 0,
+            RECONNECT_INTERVAL: 86400,
+            DEBUG: 0
         }
     )
     for key, val in options.items():
