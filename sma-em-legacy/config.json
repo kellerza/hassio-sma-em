@@ -2,7 +2,7 @@
   "name": "SMA Energy Meter (Legacy)",
   "slug": "sma-em-legacy",
   "description": "Add-on for the SMA Energy meter",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "startup": "services",
   "boot": "auto",
   "url": "https://github.com/kellerza/hassio-sma-em",
