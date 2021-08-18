@@ -28,7 +28,7 @@
     "THRESHOLD": 80,
     "RECONNECT_INTERVAL": 86400,
     "DEBUG": 0,
-    "AUTODISCOVER_CONFIG": [{"key": "state_class", "value": "measurement"}]
+    "AUTODISCOVER_CONFIG": [{"key": "state_class", "value": "total_increasing"}]
   },
   "schema": {
     "MQTT_HOST": "str",
