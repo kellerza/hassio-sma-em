@@ -4,14 +4,17 @@ import asyncio
 import logging
 import socket
 import struct
+import sys
 
 import sensors
 from speedwiredecoder import decode_speedwire
 
-BROADCAST_ADDR = "239.12.255.254"
-BROADCAST_PORT = 9522
+MCAST_GRP = "239.12.255.254"
+MCAST_PORT = 9522
+IPBIND = "0.0.0.0"
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class MulticastServerProtocol(asyncio.DatagramProtocol):
     def connection_made(self, _transport):
@@ -25,15 +28,22 @@ class MulticastServerProtocol(asyncio.DatagramProtocol):
         else:
             asyncio.get_running_loop().create_task(sensors.process_emparts(emparts))
 
+
 def connect_socket():
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind(("", BROADCAST_PORT))
-    group = socket.inet_aton(BROADCAST_ADDR)
-    mreq = struct.pack("4sL", group, socket.INADDR_ANY)
-    sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-    # sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    # sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT,)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    sock.bind(("", MCAST_PORT))
+    try:
+        # mreq = struct.pack("4s4s", group, socket.INADDR_ANY)
+        mreq = struct.pack(
+            "4s4s", socket.inet_aton(MCAST_GRP), socket.inet_aton(IPBIND)
+        )
+        sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
+    except BaseException:
+        print("could not connect to mulicast group or bind to given interface")
+        sys.exit(1)
     return sock
+
 
 async def main():
     sensors.startup()
@@ -58,6 +68,7 @@ async def main():
         finally:
             _transport.close()
             _sock.close()
+
 
 if __name__ == "__main__":
     # if os.name == "nt":
