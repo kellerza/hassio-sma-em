@@ -2,7 +2,7 @@
   "name": "SMA Energy Meter",
   "slug": "sma-em",
   "description": "Add-on for the SMA Energy meter",
-  "version": "2021.9.1",
+  "version": "2021.9.2",
   "startup": "services",
   "boot": "auto",
   "url": "https://github.com/kellerza/hassio-sma-em",
@@ -28,7 +28,7 @@
     "THRESHOLD": 80,
     "RECONNECT_INTERVAL": 86400,
     "DEBUG": 0,
-    "AUTODISCOVER_CONFIG": [{"key": "state_class", "value": "total_increasing"}]
+    "AUTODISCOVER_CONFIG": []
   },
   "schema": {
     "MQTT_HOST": "str",

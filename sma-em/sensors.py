@@ -158,6 +158,8 @@ async def hass_discover_sensor(*, sma_id: str, sensor: SWSensor):
             "mf": "SMA",
         },
     }
+    if sensor.device_class == "energy":
+        payload["state_class"] = "total_increasing"
     if isinstance(OPTIONS.get(AUTODISCOVER_CONFIG), list):
         for item in OPTIONS[AUTODISCOVER_CONFIG]:
             payload[item["key"]] = item["value"]
