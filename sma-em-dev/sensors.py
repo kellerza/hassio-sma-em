@@ -149,6 +149,8 @@ async def hass_discover_sensor(*, sma_id: str, sensor: SWSensor):
             "unit_of_meas": sensor.unit,
             "uniq_id": f"{sma_id}_{sensor.id}",
             "state_class": "measurement",
+            "last_reset_topic": f"{SMA_EM_TOPIC}/{sma_id}/{sensor.id}",
+            "last_reset_value_template": "1970-01-01T00:00:00+00:00",
             "dev": {
                 "ids": [f"sma_em_{sma_id}"],
                 "name": "SMA Energy Meter",
