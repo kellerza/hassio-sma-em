@@ -50,6 +50,7 @@ SERIALS = "SMA_SERIALS"
 FIELDS = "FIELDS"
 THRESHOLD = "THRESHOLD"
 DEBUG = "DEBUG"
+RECONNECT_INTERVAL = "RECONNECT_INTERVAL"
 
 SMA_EM_TOPIC = "SMA-EM/status"
 
@@ -141,24 +142,25 @@ def hass_device_class(*, unit: str):
 
 async def hass_discover_sensor(*, sma_id: str, sensor: SWSensor):
     topic = f"homeassistant/sensor/{sma_id}/{sensor.id}/config"
-    payload = dumps(
-        {
-            "name": sensor.id,
-            "dev_cla": sensor.device_class,
-            "stat_t": f"{SMA_EM_TOPIC}/{sma_id}/{sensor.id}",
-            "unit_of_meas": sensor.unit,
-            "uniq_id": f"{sma_id}_{sensor.id}",
-            "state_class": "measurement",
-            "dev": {
-                "ids": [f"sma_em_{sma_id}"],
-                "name": "SMA Energy Meter",
-                "mdl": "Energy Meter",
-                "mf": "SMA",
-            },
-        }
-    )
+    payload = {
+        "name": sensor.id,
+        "dev_cla": sensor.device_class,
+        "stat_t": f"{SMA_EM_TOPIC}/{sma_id}/{sensor.id}",
+        "unit_of_meas": sensor.unit,
+        "uniq_id": f"{sma_id}_{sensor.id}",
+        # "state_class": "measurement",
+        # "last_reset": "2021-07-30T00:00:00+00:00",
+        "dev": {
+            "ids": [f"sma_em_{sma_id}"],
+            "name": "SMA Energy Meter",
+            "mdl": "Energy Meter",
+            "mf": "SMA",
+        },
+    }
+    if sensor.device_class == "energy":
+        payload["state_class"] = "total_increasing"
 
-    await mqtt_publish(topic, payload, retain=True)
+    await mqtt_publish(topic, dumps(payload), retain=True)
 
 
 def get_sensors(*, definition: str, emparts: dict):
@@ -206,6 +208,7 @@ def startup():
                 "u1:min",
             ],
             THRESHOLD: 80,
+            RECONNECT_INTERVAL: 86400,
             DEBUG: 0,
         }
     )
