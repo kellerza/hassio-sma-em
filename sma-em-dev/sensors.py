@@ -113,11 +113,11 @@ async def process_emparts(emparts: dict):
 
         sen.last_update = now
         if sen.mod == "min":
-            sen.value = round(min(sen.values), 1)
+            sen.value = min(sen.values)
         if sen.mod == "max":
-            sen.value = round(max(sen.values), 1)
+            sen.value = max(sen.values)
         else:
-            sen.value = round(statistics.mean(sen.values), 1)
+            sen.value = statistics.mean(sen.values)
         sen.values = []
 
         await mqtt_publish(f"{SMA_EM_TOPIC}/{emparts['serial']}/{sen.id}", sen.value)
@@ -127,7 +127,7 @@ async def process_emparts(emparts: dict):
 
     await asyncio.sleep(0.005)
     for sen, val, delta in push_later:
-        sen.value = round(val, 1)
+        sen.value = val
         ic(sen.name, sen.value, delta)
         await mqtt_publish(f"{SMA_EM_TOPIC}/{emparts['serial']}/{sen.id}", sen.value)
 
