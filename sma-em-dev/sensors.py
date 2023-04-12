@@ -69,6 +69,12 @@ async def mqtt_publish(topic: str, payload: Any, retain: bool = False):
 
 
 async def process_emparts(emparts: dict):
+    if (emparts["protocol"] not in [0x6069, 0x6081]):
+        _LOGGER.info(
+            "Ignore protocol %s",
+            hex(emparts["protocol"])
+        )
+        return
     serial = emparts["serial"]
     if not SENSORS.get(serial):
         SENSORS[serial] = get_sensors(definition=OPTIONS[FIELDS], emparts=emparts)
