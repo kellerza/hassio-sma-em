@@ -3,3 +3,6 @@ mqtt_entity
 attrs>22
 pyyaml~=6.0
 icecream
+
+pylint
+mypy

@@ -50,11 +50,9 @@ jobs:
       - name: Install Requirements
         run: |
           python -m pip install --upgrade pip
-      - name: Install test reqs
-        run: pip install -r requirements_test.txt
+          pip install -r requirements_test.txt
       - name: Run Pylint
-        run: |
-          pylint sma-em-dev
+        run: pylint sma-em-dev
 
   mypy:
     name: Check mypy
@@ -66,7 +64,8 @@ jobs:
           python-version: ${{ env.DEFAULT_PYTHON }}
       - name: Install Requirements
         run: |
-          pip install mypy .
+          python -m pip install --upgrade pip
+          pip install -r requirements_test.txt
       - name: Run mypy
         continue-on-error: true
         run: |
