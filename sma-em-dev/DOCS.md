@@ -26,14 +26,13 @@
 
 - `SMA_SERIALS`
 
-  This value can contain a space separated list of serial numbers for which to capture
-  packets
+  This value can contain a list of serial numbers for which to capture packets
 
   This is optional, if empty, all SMA energy meters will be reported
 
 ## Available sensors
 
-The following list contains all possible `FIELD` names that you can use with the add-on
+The following list contains all possible values you can include in `FIELDS`
 
 ```text
 pconsume,  pconsumecounter,

@@ -1,5 +1,12 @@
 # Changelog
 
+## **2023.4.16** - 2023-04-16
+
+- sma-em-dev version
+  - Updated MQTT library to mqtt_entity. Enables removal of discovery sensors
+  - Ignore speedwire packets with no measurements
+  - Updated pre-commit & typing info
+
 ## **dev**
 
 - Removed AUTODISCOVER_OPTIONS

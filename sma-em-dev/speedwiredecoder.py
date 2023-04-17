@@ -16,6 +16,7 @@
  *
  */
 """
+# pylint: skip-file
 
 import binascii
 

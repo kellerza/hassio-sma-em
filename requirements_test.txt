@@ -1,0 +1,5 @@
+# should be similar o the Dockerfile
+mqtt_entity
+attrs>22
+pyyaml~=6.0
+icecream
