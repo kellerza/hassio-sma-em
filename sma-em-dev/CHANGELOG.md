@@ -1,5 +1,8 @@
 # Changelog
 
+## **2023.5.18** - 2023-05-18
+- Removed round - Issue #27
+
 ## **2023.4.16** - 2023-04-16
 
 - sma-em-dev version

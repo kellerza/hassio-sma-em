@@ -1,7 +1,7 @@
 name: SMA Energy Meter *developer version*
 slug: sma-em-dev
 description: Add-on for the SMA Energy meter
-version: 2023.4.16
+version: 2023.5.18
 startup: services
 boot: auto
 url: 'https://github.com/kellerza/hassio-sma-em-dev'
