@@ -127,17 +127,22 @@ async def process_emparts(emparts: dict):
         await mqtt_publish(f"{SMA_EM_TOPIC}/{emparts['serial']}/{sen.id}", sen.value)
 
 
-# device_calss:current/energy/power
+# device_calss:current/energy/power/voltage
 # unit_of_measurement
 def hass_device_class(*, unit: str):
     return {
         "W": "power",
         "kW": "power",
+        "VA": "power",
         "kVA": "power",
         "V": "voltage",
-        "Hz": None,
+        "A": "current",
+        "Wh": "energy",
+        "kWh": "energy",
+        "VAh": "energy",
+        "kVAh": "energy",
     }.get(
-        unit, "energy"
+        unit, None
     )  # kwh, kVa,
 
 
