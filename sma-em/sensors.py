@@ -143,7 +143,7 @@ def hass_device_class(*, unit: str):
         "kVAh": "energy",
     }.get(
         unit, None
-    )  # kwh, kVa,
+    ) # unknown device_class
 
 
 async def hass_discover_sensor(*, sma_id: str, sensor: SWSensor):
