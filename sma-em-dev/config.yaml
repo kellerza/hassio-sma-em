@@ -15,6 +15,7 @@ ports: {}
 ports_description: {}
 host_network: true
 options:
+    MCASTGRP: 239.12.255.254 
     MQTT_HOST: core-mosquitto
     MQTT_PORT: 1883
     MQTT_USERNAME: hass
@@ -28,6 +29,7 @@ options:
     RECONNECT_INTERVAL: 86400
     DEBUG: 0
 schema:
+    MCASTGRP: str
     MQTT_HOST: str
     MQTT_PORT: port
     MQTT_USERNAME: str
