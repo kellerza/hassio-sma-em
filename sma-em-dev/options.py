@@ -16,6 +16,7 @@ class Options:
     """HASS Addon Options."""
 
     # pylint: disable=too-few-public-methods
+    mcastgrp: str = "239.12.255.254"
     mqtt_host: str = ""
     mqtt_port: int = 0
     mqtt_username: str = ""
