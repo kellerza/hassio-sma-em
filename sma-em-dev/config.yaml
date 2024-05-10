@@ -29,7 +29,7 @@ options:
     RECONNECT_INTERVAL: 86400
     DEBUG: 0
 schema:
-    MCASTGRP: str
+    MCASTGRP: str?
     MQTT_HOST: str
     MQTT_PORT: port
     MQTT_USERNAME: str
