@@ -1,5 +1,9 @@
 # Changelog
 
+## **2024.5.10** - 2024-05-10
+- Added Multicast Adress as an Option Field
+
+
 ## **2023.5.18** - 2023-05-18
 - Removed round - Issue #27
 
