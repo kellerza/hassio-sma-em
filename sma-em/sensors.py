@@ -135,6 +135,7 @@ def hass_device_class(*, unit: str):
         "kW": "power",
         "kVA": "power",
         "V": "voltage",
+        "A": "current",
         "Hz": None,
     }.get(
         unit, "energy"
