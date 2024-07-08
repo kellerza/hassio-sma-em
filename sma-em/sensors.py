@@ -46,6 +46,7 @@ MQTT_HOST = "MQTT_HOST"
 MQTT_PORT = "MQTT_PORT"
 MQTT_USERNAME = "MQTT_USERNAME"
 MQTT_PASSWORD = "MQTT_PASSWORD"
+IPBIND = "IPBIND"
 SERIALS = "SMA_SERIALS"
 FIELDS = "FIELDS"
 THRESHOLD = "THRESHOLD"
@@ -204,6 +205,7 @@ def startup():
             MQTT_PASSWORD: sys.argv[1],
             MQTT_PORT: 1883,
             MQTT_USERNAME: "hass",
+            IP_BIND: "",
             SERIALS: [],
             FIELDS: [
                 "pconsume",

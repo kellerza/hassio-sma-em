@@ -19,6 +19,7 @@ options:
     MQTT_PORT: 1883
     MQTT_USERNAME: hass
     MQTT_PASSWORD: my_very_secure_password
+    IPBIND: ""
     SMA_SERIALS: []
     FIELDS:
         - pconsume
@@ -33,6 +34,7 @@ schema:
     MQTT_PORT: port
     MQTT_USERNAME: str
     MQTT_PASSWORD: password
+    IPBIND: str
     SMA_SERIALS:
         - str
     FIELDS:
