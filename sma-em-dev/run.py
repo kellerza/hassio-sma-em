@@ -10,7 +10,6 @@ import sensors
 from options import OPT, init_options
 from speedwiredecoder import decode_speedwire
 
-MCAST_GRP = "239.12.255.254"
 MCAST_PORT = 9522
 IPBIND = "0.0.0.0"
 
@@ -45,7 +44,7 @@ def connect_socket():
     try:
         # mreq = struct.pack("4s4s", group, socket.INADDR_ANY)
         mreq = struct.pack(
-            "4s4s", socket.inet_aton(MCAST_GRP), socket.inet_aton(IPBIND)
+            "4s4s", socket.inet_aton(OPT.mcastgrp), socket.inet_aton(IPBIND)
         )
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
     except BaseException:  # pylint: disable=broad-except

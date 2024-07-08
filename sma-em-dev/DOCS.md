@@ -2,6 +2,11 @@
 
 ## Parameters
 
+- `MCASTGRP`
+
+  Multicast address that is configured in the SMA Energy Meter. Default value is 239.12.255.254.
+
+
 - `MQTT_*`
 
   You will need a working MQTT sevrer since all values will be sent via MQTT.
