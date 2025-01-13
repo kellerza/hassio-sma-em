@@ -54,3 +54,9 @@ There are three versions of the addon
 ## Contributing
 
 Contributionas are welcome, please limit these to the developer version in the `sma-em-dev` folder.
+
+Pre-commit should be used to ensure formatting is consistent when a change is committed.
+
+```bash
+pre-commit install
+```

@@ -1,8 +1,10 @@
-# should be similar o the Dockerfile
-mqtt-entity
-attrs>22
+# should be similar to the Dockerfile
+mqtt-entity==0.0.4
+attrs==24.3.0
 pyyaml==6.0.2
 icecream
 
 pylint
 mypy
+types-paho-mqtt
+types-PyYAML

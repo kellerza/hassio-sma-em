@@ -15,7 +15,7 @@ repos:
           - -L
           - HASS,hass,Hass,ist
           - --skip
-          - "package-lock.json,*.map,www/docs/.vitepress/cache/*"
+          - "package-lock.json,*.map"
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.11.2
@@ -26,10 +26,10 @@ repos:
       #     ["types-attrs", "attrs>21", "types-PyYAML", "pymodbus"]
       - id: mypy
         files: "sma-em/.*.py"
-        additional_dependencies: ["attrs>24", "types-PyYAML"]
+        additional_dependencies: ["attrs>24", "types-PyYAML", "types-paho-mqtt"]
       - id: mypy
         files: "sma-em-dev/.*.py"
-        additional_dependencies: ["attrs>24", "types-PyYAML"]
+        additional_dependencies: ["attrs>24", "types-PyYAML", "types-paho-mqtt"]
 
   - repo: local
     hooks:
