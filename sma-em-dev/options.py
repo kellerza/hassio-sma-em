@@ -1,4 +1,5 @@
 """Addon options."""
+
 from __future__ import annotations
 
 import logging
@@ -21,6 +22,7 @@ class Options:
     mqtt_port: int = 0
     mqtt_username: str = ""
     mqtt_password: str = ""
+    ipbind: str = "0.0.0.0"
     sma_serials: list[str] = []
     fields: list[str] = []
     threshold: int = 80

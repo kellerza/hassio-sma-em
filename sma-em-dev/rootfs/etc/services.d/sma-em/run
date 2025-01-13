@@ -1,0 +1,3 @@
+#!/command/execlineb -P
+
+python3 /usr/src/app/run.py

@@ -6,6 +6,7 @@ EXIT /B %ERRORLEVEL%
 :copy2
 echo # Copy '%~1' to '%~2'
 xcopy /Y %~1 %~2
+xcopy /Y /S %~1\rootfs %~2\rootfs\
 
 cp %~1\config.yaml config.tmp
 sed -i 's/name: /name: LOCAL /' config.tmp

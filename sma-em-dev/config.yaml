@@ -1,8 +1,9 @@
 name: SMA Energy Meter *developer version*
 slug: sma-em-dev
 description: Add-on for the SMA Energy meter
-version: 2024.5.10
+version: 2025.1.13c
 startup: services
+init: false
 boot: auto
 url: 'https://github.com/kellerza/hassio-sma-em-dev'
 arch:
@@ -15,11 +16,12 @@ ports: {}
 ports_description: {}
 host_network: true
 options:
-    MCASTGRP: 239.12.255.254 
+    MCASTGRP: 239.12.255.254
     MQTT_HOST: core-mosquitto
     MQTT_PORT: 1883
     MQTT_USERNAME: hass
     MQTT_PASSWORD: my_very_secure_password
+    IPBIND: "0.0.0.0"
     SMA_SERIALS: []
     FIELDS:
         - p1consume
@@ -34,6 +36,7 @@ schema:
     MQTT_PORT: port
     MQTT_USERNAME: str
     MQTT_PASSWORD: password
+    IPBIND: str
     SMA_SERIALS:
         - str
     FIELDS:
