@@ -1,20 +1,20 @@
 """
- *
- * by david-m-m 2019-Mar-17
- * by datenschuft 2020-Jan-04
- *
- *  this software is released under GNU General Public License, version 2.
- *  This program is free software;
- *  you can redistribute it and/or modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; version 2 of the License.
- *  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *  See the GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along with this program;
- *  if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- */
+*
+* by david-m-m 2019-Mar-17
+* by datenschuft 2020-Jan-04
+*
+*  this software is released under GNU General Public License, version 2.
+*  This program is free software;
+*  you can redistribute it and/or modify it under the terms of the GNU General Public License
+*  as published by the Free Software Foundation; version 2 of the License.
+*  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+*  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+*  See the GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License along with this program;
+*  if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*
+*/
 """
 # pylint: skip-file
 
@@ -147,9 +147,9 @@ def decode_speedwire(datagram):
                     emparts[sma_channels[measurement][0] + "counter"] = (
                         value / sma_units[sma_channels[measurement][2]]
                     )
-                    emparts[
-                        sma_channels[measurement][0] + "counterunit"
-                    ] = sma_channels[measurement][2]
+                    emparts[sma_channels[measurement][0] + "counterunit"] = (
+                        sma_channels[measurement][2]
+                    )
             elif datatype == "version":
                 value = datagram[position + 4 : position + 8]
                 if measurement in sma_channels.keys():

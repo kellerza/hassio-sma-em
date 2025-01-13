@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Run the energy meter."""
+
 import importlib
 import os
 from json import dumps, loads

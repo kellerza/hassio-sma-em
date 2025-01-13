@@ -1,4 +1,5 @@
 """Run the energy meter."""
+
 import asyncio
 import logging
 import statistics

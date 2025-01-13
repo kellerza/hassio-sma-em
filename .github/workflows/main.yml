@@ -3,48 +3,28 @@ name: CI
 on: [push, pull_request]
 
 env:
-  DEFAULT_PYTHON: 3.9
+  DEFAULT_PYTHON: 3.12
 
 jobs:
-  black:
-    name: Check black
+  ruff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - uses: actions/checkout@v4
+      - uses: chartboost/ruff-action@v1
         with:
-          python-version: ${{ env.DEFAULT_PYTHON }}
-      - uses: psf/black@23.3.0
+          version: 0.6.3
+      - uses: chartboost/ruff-action@v1
         with:
-          options: "--check"
-          src: "."
+          version: 0.6.3
+          args: "format --check"
 
-  isort:
-    name: Check isort
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
-        with:
-          python-version: ${{ env.DEFAULT_PYTHON }}
-      - uses: jamescurtin/isort-action@master
-
-  flake8:
-    name: Check flake8
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
-        with:
-          python-version: ${{ env.DEFAULT_PYTHON }}
-      - uses: TrueBrain/actions-flake8@master
-
-  pylint:
+  lint:
     name: Check pylint
+    needs: [ruff]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
       - name: Install Requirements
@@ -52,14 +32,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements_test.txt
       - name: Run Pylint
-        run: pylint sma-em-dev
+        run: pylint src
 
   mypy:
     name: Check mypy
+    needs: [ruff]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
       - name: Install Requirements
@@ -67,6 +48,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements_test.txt
       - name: Run mypy
-        continue-on-error: true
-        run: |
-          mypy --install-types --non-interactive sma-em-dev/
+        run: mypy sma-em/
+      - name: Run mypy
+        run: mypy sma-em-dev/

@@ -1,7 +1,7 @@
 # should be similar o the Dockerfile
-mqtt_entity
+mqtt-entity
 attrs>22
-pyyaml~=6.0
+pyyaml==6.0.2
 icecream
 
 pylint
