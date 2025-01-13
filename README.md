@@ -39,3 +39,18 @@ You can use a MQTT Explorer on Windows to connect to your MQTT server and view t
 #### 3. HomeAssistant
 
 You need to enable MQTT and auto-discovery. Please refer to the HomeAssistant docs
+
+## Addons
+
+There are three versions of the addon
+
+* SMA Energy Meter
+    The recommended stable release
+* SMA Energy Meter (developer version)
+    The latest changes
+* SMA Energy Meter (Legacy)
+    Won't receive any future updates. Uses SMA-EM directly. You can try this is you are unable to receive multicast frame with the other versions.
+
+## Contributing
+
+Contributionas are welcome, please limit these to the developer version in the `sma-em-dev` folder.
