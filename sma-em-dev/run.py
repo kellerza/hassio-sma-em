@@ -17,7 +17,7 @@ _LOGGER = logging.getLogger(__name__)
 WARN: dict[int | str, int] = {}
 
 
-def warn(self, serial: int, msg: str = "") -> bool:
+def warn(serial: int) -> bool:
     """Print a warning"""
     num = WARN.get(serial, 3)
     if num < 1:
