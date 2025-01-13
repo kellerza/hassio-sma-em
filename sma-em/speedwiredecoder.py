@@ -16,6 +16,7 @@
  *
  */
 """
+# pylint: skip-file
 
 import binascii
 
@@ -110,6 +111,7 @@ def decode_speedwire(datagram):
         emID = int.from_bytes(datagram[20:24], byteorder="big")
         # print('seral: {}'.format(emID))
         emparts["serial"] = emID
+        emparts["protocol"] = int.from_bytes(datagram[16:18], byteorder="big")
         # timestamp
         # timestamp = int.from_bytes(datagram[24:28], byteorder="big")
         # print('timestamp: {}'.format(timestamp))
