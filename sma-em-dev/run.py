@@ -14,6 +14,16 @@ from speedwiredecoder import decode_speedwire
 MCAST_PORT = 9522
 
 _LOGGER = logging.getLogger(__name__)
+WARN: dict[int | str, int] = {}
+
+
+def warn(self, serial: int, msg: str = "") -> bool:
+    """Print a warning"""
+    num = WARN.get(serial, 3)
+    if num < 1:
+        return False
+    WARN[serial] = num - 1
+    return True
 
 
 class MulticastServerProtocol(asyncio.DatagramProtocol):
@@ -28,12 +38,22 @@ class MulticastServerProtocol(asyncio.DatagramProtocol):
 
     def datagram_received(self, data, _addr):
         """Process frame."""
+
         try:
             emparts = decode_speedwire(data)
         except Exception as err:  # pylint: disable=broad-except
-            _LOGGER.warning("Could not decode Speedwire %s", err)
-        else:
-            asyncio.get_running_loop().create_task(sensors.process_emparts(emparts))
+            if warn(0):
+                _LOGGER.warning("Could not decode Speedwire %s", err)
+            return
+
+        serial = emparts.get("serial")
+        if not serial:
+            return
+        if OPT.sma_serials and serial not in OPT.sma_serials:
+            if warn(serial):
+                _LOGGER.warning("Serial %s not in list of SMA_SERIALS", serial)
+            return
+        asyncio.get_running_loop().create_task(sensors.process_emparts(emparts))
 
 
 def connect_socket():
