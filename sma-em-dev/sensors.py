@@ -7,9 +7,9 @@ import time
 from typing import Union
 
 import attr
-from icecream import ic
-from mqtt_entity import Device, MQTTClient, SensorEntity
-from mqtt_entity.helpers import hass_device_class
+from icecream import ic  # type:ignore
+from mqtt_entity import Device, MQTTClient, SensorEntity  # type:ignore
+from mqtt_entity.helpers import hass_device_class  # type:ignore
 from options import OPT
 
 _LOGGER = logging.getLogger(__name__)
