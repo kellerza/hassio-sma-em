@@ -40,7 +40,18 @@ repos:
         types: [python]
         pass_filenames: false
         args: [
-            "src",
+            "sma-em-dev",
+            "-rn", # Only display messages
+            "-sn", # Don't display the score
+          ]
+      - id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [python]
+        pass_filenames: false
+        args: [
+            "sma-em",
             "-rn", # Only display messages
             "-sn", # Don't display the score
           ]

@@ -19,7 +19,7 @@ WARN: dict[int | str, int] = {}
 
 def warn(serial: int) -> bool:
     """Print a warning"""
-    num = WARN.get(serial, 3)
+    num = WARN.get(serial, 1)
     if num < 1:
         return False
     WARN[serial] = num - 1
@@ -46,7 +46,7 @@ class MulticastServerProtocol(asyncio.DatagramProtocol):
                 _LOGGER.warning("Could not decode Speedwire %s", err)
             return
 
-        serial = emparts.get("serial")
+        serial = str(emparts.get("serial", ""))
         if not serial:
             return
         if OPT.sma_serials and serial not in OPT.sma_serials:

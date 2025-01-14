@@ -2,25 +2,38 @@
 
 ## Parameters
 
-- `MCASTGRP`
-
-  Multicast address that is configured in the SMA Energy Meter. Default value is 239.12.255.254.
-
-
 - `MQTT_*`
 
   You will need a working MQTT sevrer since all values will be sent via MQTT.
   The default configuration assumes the Mosquitto broker add-on and you simply have to
   fill in your password.
 
+- `SMA_SERIALS`
+
+  This value can contain a list of serial numbers for which to capture packets
+
+  This is optional, if empty, all SMA energy meters will be reported
+
 - `FIELDS`
 
   These can be any value supported by the SMA-EM library. A list of options can be found
   [below](*available-sensors)
 
+- `MCASTGRP`
+
+  Multicast address that is configured in the SMA Energy Meter. Default value is 239.12.255.254.
+
+- `IPBIND`
+
+  Multicast address that is configured in the SMA Energy Meter. Default value is 239.12.255.254.
+
 - `THRESHOLD`
 
   Used for smart sensors, see the field modifiers below.
+
+- `RECONNECT_INTERVAL`
+
+  Interval to reconnect to the SMA Energy Meter. Default value is 86400 seconds.
 
 - `DEBUG`
 
@@ -28,12 +41,6 @@
   that you receive values for sensor `FIELDS` you configured.
 
   Recommended value: 0
-
-- `SMA_SERIALS`
-
-  This value can contain a list of serial numbers for which to capture packets
-
-  This is optional, if empty, all SMA energy meters will be reported
 
 ## Available sensors
 
@@ -100,11 +107,11 @@ interval of the SMA Energy meter (1 second)
 
 Other modifiers
 
-| Modifier | Description                                                                                                                      |
-| -------- | :------------------------------------------------------------------------------------------------------------------------------- |
-| `:max`   | the maximum value over the last 60 seconds. <br/> Ideal for _counters_ where you are typically interested only in the last value |
-| `:min`   | the minimum value over the last 60 seconds.                                                                                      |
-| `:<s>`   | any integer will allow you to get the average over the indicated amount of seconds. `:5`=5 seconds, `:60`=60 seconds             |
+| Modifier | Description                                                                                                                        |
+| -------- | :--------------------------------------------------------------------------------------------------------------------------------- |
+| `:max`   | the maximum value over the last 60 seconds. <br/> Ideal for **counters** where you are typically interested only in the last value |
+| `:min`   | the minimum value over the last 60 seconds.                                                                                        |
+| `:<s>`   | any integer will allow you to get the average over the indicated amount of seconds. `:5`=5 seconds, `:60`=60 seconds               |
 
 ## Home Assistant Utility meter
 
