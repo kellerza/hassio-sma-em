@@ -9,7 +9,9 @@ from typing import Union
 import attr
 from icecream import ic  # type:ignore
 from mqtt_entity import Device, MQTTClient, SensorEntity  # type:ignore
-from mqtt_entity.helpers import hass_device_class  # type:ignore
+from mqtt_entity.helpers import (  # type: ignore[import]
+    hass_device_class,
+)
 from options import OPT
 
 _LOGGER = logging.getLogger(__name__)
@@ -28,7 +30,6 @@ class SWSensor:
     value: Union[int, float] = attr.field(default=0)
     values: list[Union[int, float]] = attr.field(factory=list)
     unit: str = attr.field(default="")
-    device_class: str = attr.field(default="")
     mq_entity: SensorEntity = attr.field(default=None)
 
     @property
@@ -55,7 +56,7 @@ async def process_emparts(emparts: dict) -> None:
         _LOGGER.info("Ignore protocol %s", hex(emparts["protocol"]))
         return
 
-    serial = emparts["serial"]
+    serial = str(emparts["serial"])
     if not SENSORS.get(serial):
         # Discover the sensors
         _LOGGER.info(
@@ -68,9 +69,13 @@ async def process_emparts(emparts: dict) -> None:
             len(OPT.fields),
             serial,
         )
+        ha_prefix = OPT.sma_device_lookup.get(serial, "sma")
         mq_dev = Device(
             identifiers=[serial, f"sma_em_{serial}"],
-            name="SMA Energy Meter",
+            # https://github.com/kellerza/sunsynk/issues/165
+            # name=f"{OPT.manufacturer} AInverter {serial_nr}",
+            name=ha_prefix,
+            # name="SMA Energy Meter",
             model="Energy Meter",
             manufacturer="SMA",
         )
@@ -79,11 +84,16 @@ async def process_emparts(emparts: dict) -> None:
             _LOGGER.info(" - %s every %ss", sen.id, sen.interval)
             sen.mq_entity = SensorEntity(
                 name=sen.id,
-                device_class=sen.device_class,
+                device_class=hass_device_class(unit=sen.unit),
                 state_topic=f"{SMA_EM_TOPIC}/{serial}/{sen.id}",
                 unique_id=f"{serial}_{sen.id}",
                 unit_of_measurement=sen.unit,
                 device=mq_dev,
+                state_class="measurement" if is_measurement(sen.unit) else "",
+                discovery_extra={
+                    "object_id": f"{ha_prefix} {sen.name}".lower(),
+                    "suggested_display_precision": 1,
+                },
             )
 
         await MQ_CLIENT.publish_discovery_info(
@@ -136,6 +146,11 @@ async def process_emparts(emparts: dict) -> None:
         await MQ_CLIENT.publish(sen.mq_entity.state_topic, sen.value)
 
 
+def is_measurement(units: str) -> bool:
+    """Return True if the units are a measurement."""
+    return units in {"W", "V", "A", "Hz", "°C", "°F", "%", "Ah", "VA"}
+
+
 def get_sensors(*, definition: list[str], emparts: dict) -> list[SWSensor]:
     """Create a list of all SWSensors from the definitions and emparts."""
     res: list[SWSensor] = []
@@ -156,7 +171,6 @@ def get_sensors(*, definition: list[str], emparts: dict) -> list[SWSensor]:
             except ValueError:
                 sen.mod = ""
                 sen.interval = 60
-        sen.device_class = hass_device_class(unit=sen.unit)
         res.append(sen)
 
     ic(res)

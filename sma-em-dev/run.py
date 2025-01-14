@@ -49,9 +49,15 @@ class MulticastServerProtocol(asyncio.DatagramProtocol):
         serial = str(emparts.get("serial", ""))
         if not serial:
             return
-        if OPT.sma_serials and serial not in OPT.sma_serials:
+        if serial not in OPT.sma_device_lookup:
             if warn(serial):
-                _LOGGER.warning("Serial %s not in list of SMA_SERIALS", serial)
+                _LOGGER.warning(
+                    (
+                        "Unknown SMA serial number %s. If you want to use this device,"
+                        "please add SERIAL_NR and HA_PREFIX to SMA_DEVICES"
+                    ),
+                    serial,
+                )
             return
         asyncio.get_running_loop().create_task(sensors.process_emparts(emparts))
 
@@ -77,9 +83,8 @@ async def main():
     """Addon entry."""
     init_options()
 
-    sensors.MQ_CLIENT.availability_topic = (
-        f"{sensors.SMA_EM_TOPIC}/{''.join(OPT.sma_serials)}/available"
-    )
+    aid = "-".join(OPT.sma_device_lookup.values()).lower()
+    sensors.MQ_CLIENT.availability_topic = f"{sensors.SMA_EM_TOPIC}/{aid}/available"
 
     await sensors.MQ_CLIENT.connect(options=OPT)
 

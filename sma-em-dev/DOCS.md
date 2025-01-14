@@ -8,11 +8,20 @@
   The default configuration assumes the Mosquitto broker add-on and you simply have to
   fill in your password.
 
-- `SMA_SERIALS`
+- `SMA_DEVICES`
 
-  This value can contain a list of serial numbers for which to capture packets
+  This should contain of the list of devices and their prefix in Home Assistant
 
-  This is optional, if empty, all SMA energy meters will be reported
+  Serial numbers not found in the configuration will be printed in the log
+
+  Example:
+  ```yaml
+  SMA_DEVICES:
+    - SERIAL_NR: 007
+      PREFIX: sma
+    - SERIAL_NR: 008
+      PREFIX: sma2
+  ```
 
 - `FIELDS`
 

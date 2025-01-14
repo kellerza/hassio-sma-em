@@ -1,7 +1,7 @@
 name: SMA Energy Meter (developer version)
 slug: sma-em-dev
 description: Add-on for the SMA Energy meter
-version: 2025.1.14
+version: 2025.1.14a
 startup: services
 init: false
 boot: auto
@@ -16,29 +16,32 @@ ports: {}
 ports_description: {}
 host_network: true
 options:
-    MQTT_HOST: core-mosquitto
-    MQTT_PORT: 1883
-    MQTT_USERNAME: ""
-    MQTT_PASSWORD: ""
-    SMA_SERIALS: []
+    SMA_DEVICES:
+        - SERIAL_NR: "007"
+          HA_PREFIX: "SMA"
     FIELDS:
         - p1consume
         - "p1consumecounter:max"
         - u1
+    MQTT_HOST: core-mosquitto
+    MQTT_PORT: 1883
+    MQTT_USERNAME: ""
+    MQTT_PASSWORD: ""
     MCASTGRP: 239.12.255.254
     IPBIND: "0.0.0.0"
     THRESHOLD: 80
     RECONNECT_INTERVAL: 86400
     DEBUG: 0
 schema:
+    SMA_DEVICES:
+        - SERIAL_NR: str
+          HA_PREFIX: str
+    FIELDS:
+        - str
     MQTT_HOST: str
     MQTT_PORT: port
     MQTT_USERNAME: str
     MQTT_PASSWORD: password
-    SMA_SERIALS:
-        - str
-    FIELDS:
-        - str
     MCASTGRP: str?
     IPBIND: str?
     THRESHOLD: "int(10,1000)?"
