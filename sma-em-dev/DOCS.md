@@ -1,4 +1,4 @@
-# Configuration *developer version*
+# Configuration (developer version)
 
 ## Parameters
 

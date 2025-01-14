@@ -30,7 +30,7 @@ class Options:
     fields: list[str] = attrs.field(factory=list)
     threshold: int = 80
     reconnect_interval: int = 86400
-    debug: int = 1
+    debug: int = 0
 
     def load(self, value: dict) -> None:
         """Structure and copy result to self."""
@@ -46,6 +46,8 @@ class Options:
         for key, val in attrs.asdict(obj).items():
             if val:
                 setattr(self, key, val)
+        self.sma_serials = [str(s) for s in self.sma_serials]
+        self.fields = [str(s) for s in self.fields]
 
 
 OPT = Options()

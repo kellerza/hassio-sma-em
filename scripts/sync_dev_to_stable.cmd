@@ -1,5 +1,5 @@
-xcopy /y /s sma-em sma-em-dev
-sed -i 's/sma-em"/sma-em-dev"/g' sma-em-dev/config.json
-sed -i 's/"SMA Energy Meter"/"SMA Energy Meter *developer version*"/' sma-em-dev/config.json
-sed -i 's/# SMA Energy Meter Add-On/# SMA Energy Meter Add-On *developer version*/' sma-em-dev/README.md
-sed -i 's/# Configuration/# Configuration *developer version*/' sma-em-dev/DOCS.md
+xcopy /y /s sma-em-dev sma-em
+sed -i 's/sma-em-dev/sma-em/g' sma-em/config.yaml
+sed -i 's/ (developer version)//' sma-em/config.yaml
+sed -i 's/ (developer version)//' sma-em/README.md
+sed -i 's/ (developer version)//' sma-em/DOCS.md

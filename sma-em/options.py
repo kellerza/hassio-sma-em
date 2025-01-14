@@ -2,37 +2,52 @@
 
 from __future__ import annotations
 
+import typing as t
 import logging
 from json import loads
 from pathlib import Path
 
-import attr
-import yaml
+from yaml import safe_load
+import attrs
+from cattrs import Converter, transform_error
+from cattrs.gen import make_dict_structure_fn
 
 _LOGGER = logging.getLogger(__name__)
 
 
-@attr.define(slots=True)
+@attrs.define(slots=True)
 class Options:
     """HASS Addon Options."""
 
     # pylint: disable=too-few-public-methods,too-many-instance-attributes
     mcastgrp: str = "239.12.255.254"
-    mqtt_host: str = ""
-    mqtt_port: int = 0
+    mqtt_host: str = "core-mosquitto"
+    mqtt_port: int = 1883
     mqtt_username: str = ""
     mqtt_password: str = ""
     ipbind: str = "0.0.0.0"
-    sma_serials: list[str] = []
-    fields: list[str] = []
+    sma_serials: list[str] = attrs.field(factory=list)
+    fields: list[str] = attrs.field(factory=list)
     threshold: int = 80
     reconnect_interval: int = 86400
-    debug: int = 1
+    debug: int = 0
 
-    def update(self, json: dict) -> None:
-        """Update options."""
-        for key, val in json.items():
-            setattr(self, key.lower(), val)
+    def load(self, value: dict) -> None:
+        """Structure and copy result to self."""
+        value = {k: v for k, v in value.items() if v}
+        try:
+            _LOGGER.debug("Loading config: %s", value)
+            obj = CONVERTER.structure(value, Options)
+        except Exception as exc:
+            msg = "Error loading config: " + "\n".join(transform_error(exc))
+            _LOGGER.error(msg)
+            raise ValueError(msg)  # pylint:disable=raise-missing-from
+
+        for key, val in attrs.asdict(obj).items():
+            if val:
+                setattr(self, key, val)
+        self.sma_serials = [str(s) for s in self.sma_serials]
+        self.fields = [str(s) for s in self.fields]
 
 
 OPT = Options()
@@ -47,15 +62,15 @@ def init_options() -> None:
     hassosf = Path("/data/options.json")
     if hassosf.exists():
         _LOGGER.info("Loading HASS OS configuration")
-        OPT.update(loads(hassosf.read_text(encoding="utf-8")))
+        OPT.load(loads(hassosf.read_text(encoding="utf-8")))
     else:
         configf = Path(__file__).parent / "config.yaml"
         _LOGGER.info("Local mode - load defaults from %s", str(configf))
-        OPT.update(yaml.safe_load(configf.read_text()).get("options", {}))
+        OPT.load(safe_load(configf.read_text()).get("options", {}))
         localf = Path(__file__).parent.parent / ".local.yaml"
         if localf.exists():
             _LOGGER.info("Local mode - load overrides from %s", str(localf))
-            OPT.update(yaml.safe_load(localf.read_text()))
+            OPT.load(safe_load(localf.read_text()))
 
     if OPT.debug < 2:
         logging.basicConfig(
@@ -63,3 +78,24 @@ def init_options() -> None:
             level=logging.INFO,
             force=True,
         )
+
+
+CONVERTER = Converter(forbid_extra_keys=True)
+
+
+def structure_ensure_lowercase_keys(cls: t.Type) -> t.Callable[[t.Any, t.Any], t.Any]:
+    """Convert any uppercase keys to lowercase."""
+    struct = make_dict_structure_fn(cls, CONVERTER)  # type: ignore
+
+    def structure(d: dict[str, t.Any], cl: t.Any) -> t.Any:
+        lower = [k for k in d if k.lower() != k]
+        for k in lower:
+            if k.lower() in d:
+                _LOGGER.warning("Key %s already exists in lowercase", k.lower())
+            d[k.lower()] = d.pop(k)
+        return struct(d, cl)
+
+    return structure
+
+
+CONVERTER.register_structure_hook_factory(attrs.has, structure_ensure_lowercase_keys)

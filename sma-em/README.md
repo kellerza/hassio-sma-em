@@ -1,4 +1,4 @@
-# SMA Energy Meter Add-On *developer version*
+# SMA Energy Meter Add-On
 
 An add-on to receive SMA Energy Meter measurements and push them to Home Assistant through MQTT.
 
