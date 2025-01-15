@@ -2,12 +2,6 @@
 
 ## Parameters
 
-- `MQTT_*`
-
-  You will need a working MQTT sevrer since all values will be sent via MQTT.
-  The default configuration assumes the Mosquitto broker add-on and you simply have to
-  fill in your password.
-
 - `SMA_DEVICES`
 
   This should contain of the list of devices and their prefix in Home Assistant
@@ -27,6 +21,12 @@
 
   These can be any value supported by the SMA-EM library. A list of options can be found
   [below](*available-sensors)
+
+- `MQTT_*`
+
+  You will need a working MQTT sevrer since all values will be sent via MQTT.
+  The default configuration assumes the Mosquitto broker add-on and you simply have to
+  fill in your password.
 
 - `MCASTGRP`
 
