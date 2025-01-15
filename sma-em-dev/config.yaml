@@ -1,7 +1,7 @@
 name: SMA Energy Meter (developer version)
 slug: sma-em-dev
 description: Add-on for the SMA Energy meter
-version: 2025.1.14a
+version: 2025.1.14b
 startup: services
 init: false
 boot: auto

@@ -9,6 +9,7 @@
   Serial numbers not found in the configuration will be printed in the log
 
   Example:
+
   ```yaml
   SMA_DEVICES:
     - SERIAL_NR: 007

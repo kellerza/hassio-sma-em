@@ -19,6 +19,7 @@
 # pylint: skip-file
 
 import binascii
+from typing import Any
 
 # unit definitions with scaling
 sma_units = {
@@ -81,7 +82,7 @@ sma_channels = {
 }
 
 
-def decode_OBIS(obis):
+def decode_OBIS(obis: bytes) -> tuple[int, str]:
     measurement = int.from_bytes(obis[0:2], byteorder="big")
     raw_type = int.from_bytes(obis[2:3], byteorder="big")
     if raw_type == 4:
@@ -91,45 +92,31 @@ def decode_OBIS(obis):
     elif raw_type == 0 and measurement == 36864:
         datatype = "version"
     else:
-        datatype = "unknown"
-        print(
-            "unknown datatype: measurement {} datatype {} raw_type {}".format(
-                measurement, datatype, raw_type
-            )
-        )
+        datatype = f"Unknown datatype: measurement {measurement} raw_type {raw_type}"
     return (measurement, datatype)
 
 
-def decode_speedwire(datagram):
-    emparts = {}
+def decode_speedwire(datagram: bytes) -> dict[str, Any]:
+    emparts: dict[str, Any] = {}
     # process data only of SMA header is present
     if datagram[0:3] == b"SMA":
         # datagram length
         datalength = int.from_bytes(datagram[12:14], byteorder="big") + 16
         # print('data length: {}'.format(datalength))
         # serial number
-        emID = int.from_bytes(datagram[20:24], byteorder="big")
-        # print('seral: {}'.format(emID))
-        emparts["serial"] = emID
+        emparts["serial"] = str(int.from_bytes(datagram[20:24], byteorder="big"))
         emparts["protocol"] = int.from_bytes(datagram[16:18], byteorder="big")
-        # timestamp
-        # timestamp = int.from_bytes(datagram[24:28], byteorder="big")
-        # print('timestamp: {}'.format(timestamp))
+        emparts["timestamp"] = int.from_bytes(datagram[24:28], byteorder="big")
         # decode OBIS data blocks
         # start with header
-        position = 28
-        while position < datalength:
+        pos = 28
+        while pos < datalength:
             # decode header
-            # print('pos: {}'.format(position))
-            (measurement, datatype) = decode_OBIS(datagram[position : position + 4])
-            # print('measurement {} datatype: {}'.format(measurement,datatype))
-            # decode values
-            # actual values
+            (measurement, datatype) = decode_OBIS(datagram[pos : pos + 4])
+            # decode value
             if datatype == "actual":
-                value = int.from_bytes(
-                    datagram[position + 4 : position + 8], byteorder="big"
-                )
-                position += 8
+                value = int.from_bytes(datagram[pos + 4 : pos + 8], byteorder="big")
+                pos += 8
                 if measurement in sma_channels.keys():
                     emparts[sma_channels[measurement][0]] = (
                         value / sma_units[sma_channels[measurement][1]]
@@ -137,12 +124,9 @@ def decode_speedwire(datagram):
                     emparts[sma_channels[measurement][0] + "unit"] = sma_channels[
                         measurement
                     ][1]
-            # counter values
             elif datatype == "counter":
-                value = int.from_bytes(
-                    datagram[position + 4 : position + 12], byteorder="big"
-                )
-                position += 12
+                value = int.from_bytes(datagram[pos + 4 : pos + 12], byteorder="big")
+                pos += 12
                 if measurement in sma_channels.keys():
                     emparts[sma_channels[measurement][0] + "counter"] = (
                         value / sma_units[sma_channels[measurement][2]]
@@ -151,9 +135,9 @@ def decode_speedwire(datagram):
                         sma_channels[measurement][2]
                     )
             elif datatype == "version":
-                value = datagram[position + 4 : position + 8]
+                valb = datagram[pos + 4 : pos + 8]
                 if measurement in sma_channels.keys():
-                    bversion = binascii.b2a_hex(value).decode("utf-8")
+                    bversion = binascii.b2a_hex(valb).decode("utf-8")
                     version = (
                         str(int(bversion[0:2], 16))
                         + "."
@@ -163,24 +147,14 @@ def decode_speedwire(datagram):
                     )
                     revision = str(chr(int(bversion[6:8])))
                     # revision definitions
-                    if revision == "1":
-                        # S – Spezial Version
-                        version = version + ".S"
-                    elif revision == "2":
-                        # A – Alpha (noch kein Feature Complete, Version für Verifizierung und Validierung)
-                        version = version + ".A"
-                    elif revision == "3":
-                        # B – Beta (Feature Complete, Version für Verifizierung und Validierung)
-                        version = version + ".B"
-                    elif revision == "4":
-                        # R – Release Candidate / Release (Version für Verifizierung, Validierung und Feldtest / öffentliche Version)
-                        version = version + ".R"
-                    elif revision == "5":
-                        # E – Experimental Version (dient zur lokalen Verifizierung)
-                        version = version + ".E"
-                    elif revision == "6":
-                        # N – Keine Revision
-                        version = version + ".N"
+                    version = {
+                        "1": "S",  # Spezial Version
+                        "2": "A",  # Alpha (noch kein Feature Complete, Version für Verifizierung und Validierung)
+                        "3": "B",  # Beta (Feature Complete, Version für Verifizierung und Validierung)
+                        "4": "R",  # Release Candidate / Release (Version für Verifizierung, Validierung und Feldtest / öffentliche Version)
+                        "5": "E",  # Experimental Version (dient zur lokalen Verifizierung)
+                        "6": "N",  # Keine Revision
+                    }.get(revision, version)
                     # adding versionnumber to compare versions
                     version = (
                         version
@@ -190,7 +164,8 @@ def decode_speedwire(datagram):
                         + str(bversion[4:6])
                     )
                     emparts[sma_channels[measurement][0]] = version
-                position += 8
-            else:
-                position += 8
+                pos += 8
+            else:  # unknown datatype
+                emparts.setdefault("unknown", []).append(datatype)
+                pos += 8
     return emparts

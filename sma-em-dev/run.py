@@ -14,10 +14,10 @@ from speedwiredecoder import decode_speedwire
 MCAST_PORT = 9522
 
 _LOGGER = logging.getLogger(__name__)
-WARN: dict[int | str, int] = {}
+WARN: dict[str, int] = {"0": 5}
 
 
-def warn(serial: int) -> bool:
+def warn(serial: str) -> bool:
     """Print a warning"""
     num = WARN.get(serial, 1)
     if num < 1:
@@ -42,13 +42,14 @@ class MulticastServerProtocol(asyncio.DatagramProtocol):
         try:
             emparts = decode_speedwire(data)
         except Exception as err:  # pylint: disable=broad-except
-            if warn(0):
+            if warn("0"):
                 _LOGGER.warning("Could not decode Speedwire %s", err)
             return
 
-        serial = str(emparts.get("serial", ""))
-        if not serial:
+        if not emparts:
             return
+
+        serial = str(emparts["serial"])
         if serial not in OPT.sma_device_lookup:
             if warn(serial):
                 _LOGGER.warning(
@@ -58,6 +59,9 @@ class MulticastServerProtocol(asyncio.DatagramProtocol):
                     ),
                     serial,
                 )
+            return
+        if "unknown" in emparts and warn(f"unknown{serial}"):
+            _LOGGER.info("Unknown data in frame: %s", "\n".join(emparts["unknown"]))
             return
         asyncio.get_running_loop().create_task(sensors.process_emparts(emparts))
 
@@ -95,17 +99,17 @@ async def main():
     loop.set_debug(True)
 
     while True:
-        _sock = connect_socket()
-        _transport, _protocol = await loop.create_datagram_endpoint(
+        sock = connect_socket()
+        transport, _ = await loop.create_datagram_endpoint(
             MulticastServerProtocol,
-            sock=_sock,
+            sock=sock,
         )
 
         try:
             await asyncio.sleep(OPT.reconnect_interval)
         finally:
-            _transport.close()
-            _sock.close()
+            transport.close()
+            sock.close()
 
 
 if __name__ == "__main__":
