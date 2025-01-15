@@ -46,7 +46,6 @@ class Options:
         """Structure and copy result to self."""
         value = {k: v for k, v in value.items() if v}
         try:
-            _LOGGER.debug("Loading config: %s", value)
             obj = CONVERTER.structure(value, Options)
         except Exception as exc:
             msg = "Error loading config: " + "\n".join(transform_error(exc))

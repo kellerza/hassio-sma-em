@@ -32,8 +32,13 @@ class MulticastServerProtocol(asyncio.DatagramProtocol):
     def connection_made(self, _transport):
         """Protocol connected."""
         _LOGGER.info(
-            "Listening for multicast frames. "
-            "Sensor discovery will be triggered by the first frame."
+            "Listening for frames on interface %s, for multicast group %s",
+            OPT.ipbind,
+            OPT.mcastgrp,
+        )
+        _LOGGER.info(
+            "Sensor discovery will be triggered by the first frame containing these serial numbers: %s",
+            ", ".join(OPT.sma_device_lookup),
         )
 
     def datagram_received(self, data, _addr):

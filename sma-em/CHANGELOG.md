@@ -1,5 +1,11 @@
 # Changelog
 
+## **2025.1.14** - 2025-01-15
+
+- Improve HA discovery. Add state_class to support satistics.
+- Use `SMA_DEVICES` instead of `SMA_SERIALS`. This allows you to control the HA prefix if you have multiple SMA devices
+- Minor changes to the speedwiredecoder library
+
 ## **2025.1.13** - 2025-01-13
 
 - Added Address to bind to as an option (useful if you have multiple addresses). The default is `0.0.0.0`

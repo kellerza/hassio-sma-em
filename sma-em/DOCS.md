@@ -2,22 +2,32 @@
 
 ## Parameters
 
-- `MQTT_*`
+- `SMA_DEVICES`
 
-  You will need a working MQTT sevrer since all values will be sent via MQTT.
-  The default configuration assumes the Mosquitto broker add-on and you simply have to
-  fill in your password.
+  This should contain of the list of devices and their prefix in Home Assistant
 
-- `SMA_SERIALS`
+  Serial numbers not found in the configuration will be printed in the log
 
-  This value can contain a list of serial numbers for which to capture packets
+  Example:
 
-  This is optional, if empty, all SMA energy meters will be reported
+  ```yaml
+  SMA_DEVICES:
+    - SERIAL_NR: 007
+      PREFIX: sma
+    - SERIAL_NR: 008
+      PREFIX: sma2
+  ```
 
 - `FIELDS`
 
   These can be any value supported by the SMA-EM library. A list of options can be found
   [below](*available-sensors)
+
+- `MQTT_*`
+
+  You will need a working MQTT sevrer since all values will be sent via MQTT.
+  The default configuration assumes the Mosquitto broker add-on and you simply have to
+  fill in your password.
 
 - `MCASTGRP`
 

@@ -1,9 +1,10 @@
 # Changelog
 
-## **2025.1.14** - 2025-01-14
+## **2025.1.14** - 2025-01-15
 
 - Improve HA discovery. Add state_class to support satistics.
 - Use `SMA_DEVICES` instead of `SMA_SERIALS`. This allows you to control the HA prefix if you have multiple SMA devices
+- Minor changes to the speedwiredecoder library
 
 ## **2025.1.13** - 2025-01-13
 
