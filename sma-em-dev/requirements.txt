@@ -1,5 +1,5 @@
 mqtt-entity==0.0.4
 attrs==25.1.0
-cattrs==24.1.2
+cattrs==25.1.1
 pyyaml==6.0.2
 icecream==2.1.4
