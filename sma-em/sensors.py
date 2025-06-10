@@ -112,10 +112,10 @@ async def process_emparts(emparts: dict) -> None:
 
         # check threshold crossing
         smart_s = sen.mod == "" and sen.values
-        if smart_s and val > sen.value + OPT.threshold:
+        if smart_s and float(val) > sen.value + OPT.threshold:
             publish = True
             push_later.append((sen, val, OPT.threshold))
-        elif smart_s and val < sen.value - 2 * OPT.threshold:
+        elif smart_s and float(val) < sen.value - 2 * OPT.threshold:
             publish = True
             push_later.append((sen, val, -2 * OPT.threshold))
         else:
