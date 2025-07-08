@@ -6,6 +6,6 @@ updates:
       interval: "weekly"
 
   - package-ecosystem: "uv"
-    directory: "/sma-em-dev"
+    directory: "/"
     schedule:
       interval: "daily"
