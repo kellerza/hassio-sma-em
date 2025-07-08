@@ -6,10 +6,11 @@ import logging
 import socket
 import struct
 import sys
+from typing import Any
 
-import sensors
-from options import OPT, init_options
-from speedwiredecoder import decode_speedwire
+from .options import OPT
+from .sensors import MQTT, SMA_EM_TOPIC, ic, process_emparts
+from .speedwiredecoder import decode_speedwire
 
 MCAST_PORT = 9522
 
@@ -18,7 +19,7 @@ WARN: dict[str, int] = {"0": 5}
 
 
 def warn(serial: str) -> bool:
-    """Print a warning"""
+    """Print a warning."""
     num = WARN.get(serial, 1)
     if num < 1:
         return False
@@ -29,7 +30,7 @@ def warn(serial: str) -> bool:
 class MulticastServerProtocol(asyncio.DatagramProtocol):
     """Multicast receiver."""
 
-    def connection_made(self, _transport):
+    def connection_made(self, transport: Any) -> None:
         """Protocol connected."""
         _LOGGER.info(
             "Listening for frames on interface %s, for multicast group %s",
@@ -41,9 +42,8 @@ class MulticastServerProtocol(asyncio.DatagramProtocol):
             ", ".join(OPT.sma_device_lookup),
         )
 
-    def datagram_received(self, data, _addr):
+    def datagram_received(self, data: Any, addr: Any) -> None:
         """Process frame."""
-
         try:
             emparts = decode_speedwire(data)
         except Exception as err:  # pylint: disable=broad-except
@@ -68,10 +68,10 @@ class MulticastServerProtocol(asyncio.DatagramProtocol):
         if "unknown" in emparts and warn(f"unknown{serial}"):
             _LOGGER.info("Unknown data in frame: %s", "\n".join(emparts["unknown"]))
             return
-        asyncio.get_running_loop().create_task(sensors.process_emparts(emparts))
+        asyncio.get_running_loop().create_task(process_emparts(emparts))
 
 
-def connect_socket():
+def connect_socket() -> socket.socket:
     """Connect."""
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -83,22 +83,22 @@ def connect_socket():
         )
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
     except BaseException:  # pylint: disable=broad-except
-        print("could not connect to mulicast group or bind to given interface")
+        print("could not connect to multicast group or bind to given interface")
         sys.exit(1)
     return sock
 
 
-async def main():
+async def main() -> None:
     """Addon entry."""
-    init_options()
+    OPT.init_addon()
 
     aid = "-".join(OPT.sma_device_lookup.values()).lower()
-    sensors.MQ_CLIENT.availability_topic = f"{sensors.SMA_EM_TOPIC}/{aid}/available"
+    MQTT.availability_topic = f"{SMA_EM_TOPIC}/{aid}/available"
 
-    await sensors.MQ_CLIENT.connect(options=OPT)
+    await MQTT.connect(OPT)
 
     if OPT.debug == 0:
-        sensors.ic.disable()
+        ic.disable()
 
     loop = asyncio.get_event_loop()
     loop.set_debug(True)

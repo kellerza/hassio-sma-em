@@ -1,7 +1,8 @@
 name: SMA Energy Meter
+version: 2025.1.15
+image: ghcr.io/kellerza/hass-addon-sma-em
 slug: sma-em
 description: Add-on for the SMA Energy meter
-version: 2025.1.15
 startup: services
 init: false
 boot: auto

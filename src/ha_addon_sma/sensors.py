@@ -4,17 +4,16 @@ import asyncio
 import logging
 import statistics
 import time
-from typing import Union
 
 import attr
 from icecream import ic  # type:ignore
-from mqtt_entity import Device, MQTTClient, SensorEntity  # type:ignore
-from mqtt_entity.helpers import (  # type: ignore[import]
-    hass_device_class,
-)
-from options import OPT
+from mqtt_entity import MQTTClient, MQTTDevice, MQTTSensorEntity
+from mqtt_entity.helpers import hass_device_class
+
+from .options import OPT
 
 _LOGGER = logging.getLogger(__name__)
+MQTT = MQTTClient(devs=[], origin_name="SMA Energy Meter")
 
 
 @attr.define
@@ -23,14 +22,15 @@ class SWSensor:
 
     # pylint: disable=too-many-instance-attributes,too-few-public-methods
 
-    name: str = attr.field()
-    mod: str = attr.field()  # 0 = mean, 1 = max, -1 = min
-    last_update: int = attr.field(default=0)
-    interval: int = attr.field(default=5)
-    value: Union[int, float] = attr.field(default=0)
-    values: list[Union[int, float]] = attr.field(factory=list)
-    unit: str = attr.field(default="")
-    mq_entity: SensorEntity = attr.field(default=None)
+    name: str
+    mod: str
+    """0 = mean, 1 = max, -1 = min"""
+    last_update: int = 0
+    interval: int = 5
+    value: int | float = 0
+    values: list[int | float] = attr.field(factory=list)
+    unit: str = ""
+    mq_entity: MQTTSensorEntity = attr.field(default=None)
 
     @property
     def id(self) -> str:  # pylint: disable=invalid-name
@@ -43,7 +43,6 @@ class SWSensor:
 
 
 SENSORS: dict[str, list[SWSensor]] = {}
-MQ_CLIENT = MQTTClient()
 
 
 SMA_EM_TOPIC = "SMA-EM/status"
@@ -70,7 +69,7 @@ async def process_emparts(emparts: dict) -> None:
             serial,
         )
         ha_prefix = OPT.sma_device_lookup.get(serial, "sma")
-        mq_dev = Device(
+        mq_dev = MQTTDevice(
             identifiers=[serial, f"sma_em_{serial}"],
             # https://github.com/kellerza/sunsynk/issues/165
             # name=f"{OPT.manufacturer} AInverter {serial_nr}",
@@ -78,30 +77,29 @@ async def process_emparts(emparts: dict) -> None:
             # name="SMA Energy Meter",
             model="Energy Meter",
             manufacturer="SMA",
+            components={},
         )
+        MQTT.devs.append(mq_dev)
 
         for sen in SENSORS[serial]:
             _LOGGER.info(" - %s every %ss", sen.id, sen.interval)
-            sen.mq_entity = SensorEntity(
+            sen.mq_entity = MQTTSensorEntity(
                 name=sen.id,
                 device_class=hass_device_class(unit=sen.unit),
                 state_topic=f"{SMA_EM_TOPIC}/{serial}/{sen.id}",
                 unique_id=f"{serial}_{sen.id}",
                 unit_of_measurement=sen.unit,
-                device=mq_dev,
                 state_class="measurement" if is_measurement(sen.unit) else "",
-                discovery_extra={
-                    "object_id": f"{ha_prefix} {sen.name}".lower(),
-                    "suggested_display_precision": 1,
-                },
+                object_id=f"{ha_prefix} {sen.name}".lower(),
+                suggested_display_precision=1,
             )
 
-        await MQ_CLIENT.publish_discovery_info(
-            [s.mq_entity for sl in SENSORS.values() for s in sl]
-        )
+        mq_dev.components = {s.id: s.mq_entity for sl in SENSORS.values() for s in sl}
+        await MQTT.publish_discovery_info_now()
+        MQTT.publish_discovery_info_when_online()
         await asyncio.sleep(5)
 
-    push_later: list[tuple[SWSensor, Union[int, float], int]] = []
+    push_later: list[tuple[SWSensor, int | float, int]] = []
     now = int(time.time())
     for sen in SENSORS[serial]:
         val = emparts.get(sen.name)
@@ -134,7 +132,7 @@ async def process_emparts(emparts: dict) -> None:
             sen.value = statistics.mean(sen.values)
         sen.values = []
 
-        await MQ_CLIENT.publish(sen.mq_entity.state_topic, sen.value)
+        await sen.mq_entity.send_state(MQTT, sen.value)
 
     if not push_later:
         return
@@ -143,7 +141,7 @@ async def process_emparts(emparts: dict) -> None:
     for sen, val, delta in push_later:
         sen.value = val
         ic(sen.name, sen.value, delta)
-        await MQ_CLIENT.publish(sen.mq_entity.state_topic, sen.value)
+        await sen.mq_entity.send_state(MQTT, sen.value)
 
 
 def is_measurement(units: str) -> bool:

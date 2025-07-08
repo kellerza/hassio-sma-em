@@ -1,5 +1,4 @@
-"""
-*
+"""*
 * by david-m-m 2019-Mar-17
 * by datenschuft 2020-Jan-04
 *

@@ -1,10 +1,12 @@
-name: SMA Energy Meter (developer version)
+name: LOCAL SMA Energy Meter
 version: 2025.1.15
-image: ghcr.io/kellerza/hass-addon-sma-em
-slug: sma-em-dev
+# image: ghcr.io/kellerza/hass-addon-sma-em
+slug: sma-em
+description: Add-on for the SMA Energy meter
+startup: services
 init: false
 boot: auto
-url: "https://github.com/kellerza/hassio-sma-em-dev"
+url: "https://github.com/kellerza/hassio-sma-em"
 arch:
     - aarch64
     - amd64
