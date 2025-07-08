@@ -1,4 +1,4 @@
-name: Deploy sunsynk addon to ghcr.io
+name: Deploy sma-em addon to ghcr.io
 
 on:
   release:
@@ -14,7 +14,7 @@ on:
 env:
   ADDON_SLUG: sma-em
   ADDON_SLUG_EDGE: sma-em-dev
-  PKG_NAME: sunsynk
+  PKG_NAME: sma
   REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/hass-addon-sma-em
 
 jobs:

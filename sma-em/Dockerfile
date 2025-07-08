@@ -6,7 +6,7 @@ LABEL maintainer="Johann Kellerman <kellerza@gmail.com>"
 # Add uv to the `PATH`
 ENV PATH="/root/.local/bin/:$PATH"
 
-# Install sunsynk from local source
+# Install sma from local source
 COPY sma sma
 
 RUN set -x \
