@@ -1,5 +1,5 @@
 name: SMA Energy Meter (developer version)
-version: 2025.1.15
+version: "e60de56"
 image: ghcr.io/kellerza/hass-addon-sma-em
 slug: sma-em-dev
 init: false
