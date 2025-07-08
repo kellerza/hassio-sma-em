@@ -2,6 +2,8 @@ name: SMA Energy Meter (developer version)
 version: "e60de56"
 image: ghcr.io/kellerza/hass-addon-sma-em
 slug: sma-em-dev
+description: Add-on for the SMA Energy meter
+startup: services
 init: false
 boot: auto
 url: "https://github.com/kellerza/hassio-sma-em-dev"
