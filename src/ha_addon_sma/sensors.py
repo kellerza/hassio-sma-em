@@ -10,6 +10,7 @@ from icecream import ic  # type:ignore
 from mqtt_entity import MQTTClient, MQTTDevice, MQTTSensorEntity
 from mqtt_entity.helpers import hass_device_class
 
+from .helpers import pretty_print_dict
 from .options import OPT
 
 _LOGGER = logging.getLogger(__name__)
@@ -157,6 +158,7 @@ def get_sensors(*, definition: list[str], emparts: dict) -> list[SWSensor]:
 
         if name not in emparts:
             _LOGGER.info("Unknown sensor: %s", name)
+            pretty_print_dict(emparts, indent=5)
             continue
 
         sen = SWSensor(name=name, mod=mod, unit=emparts.get(f"{name}unit", ""))
