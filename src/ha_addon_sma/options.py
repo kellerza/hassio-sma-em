@@ -16,12 +16,15 @@ class SmaOptions:
     serial_nr: str = ""
     ha_prefix: str = ""
 
+    def __attrs_post_init__(self) -> None:
+        """Post init."""
+        self.ha_prefix = self.ha_prefix.lower()
+
 
 @attrs.define(slots=True)
 class Options(MQTTOptions):
     """HASS Addon Options."""
 
-    # pylint: disable=too-few-public-methods,too-many-instance-attributes
     mcastgrp: str = "239.12.255.254"
     ipbind: str = "0.0.0.0"
     sma_devices: list[SmaOptions] = attrs.field(factory=list)

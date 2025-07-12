@@ -6,7 +6,7 @@ import statistics
 import time
 
 import attr
-from icecream import ic  # type:ignore
+from icecream import ic  # type:ignore[import]
 from mqtt_entity import MQTTClient, MQTTDevice, MQTTSensorEntity
 from mqtt_entity.helpers import hass_device_class
 
@@ -14,14 +14,12 @@ from .helpers import pretty_print_dict
 from .options import OPT
 
 _LOGGER = logging.getLogger(__name__)
-MQTT = MQTTClient(devs=[], origin_name="SMA Energy Meter")
+MQTT = MQTTClient(origin_name="SMA Energy Meter")
 
 
 @attr.define
 class SWSensor:
     """A speedwire sensor."""
-
-    # pylint: disable=too-many-instance-attributes,too-few-public-methods
 
     name: str
     mod: str
@@ -34,7 +32,7 @@ class SWSensor:
     mq_entity: MQTTSensorEntity = attr.field(default=None)
 
     @property
-    def id(self) -> str:  # pylint: disable=invalid-name
+    def id(self) -> str:
         """Return the ID."""
         if self.mod == "":
             return self.name
@@ -49,9 +47,8 @@ SENSORS: dict[str, list[SWSensor]] = {}
 SMA_EM_TOPIC = "SMA-EM/status"
 
 
-async def process_emparts(emparts: dict) -> None:
+async def process_emparts(emparts: dict) -> None:  # noqa: PLR0912
     """Process emparts from the speedwire decoder."""
-    # pylint: disable=too-many-branches
     if emparts["protocol"] not in [0x6069, 0x6081]:
         _LOGGER.info("Ignore protocol %s", hex(emparts["protocol"]))
         return
@@ -96,8 +93,8 @@ async def process_emparts(emparts: dict) -> None:
             )
 
         mq_dev.components = {s.id: s.mq_entity for sl in SENSORS.values() for s in sl}
-        await MQTT.publish_discovery_info_now()
-        MQTT.publish_discovery_info_when_online()
+        await MQTT.publish_discovery_info()
+        MQTT.monitor_homeassistant_status()
         await asyncio.sleep(5)
 
     push_later: list[tuple[SWSensor, int | float, int]] = []

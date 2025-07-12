@@ -46,7 +46,7 @@ class MulticastServerProtocol(asyncio.DatagramProtocol):
         """Process frame."""
         try:
             emparts = decode_speedwire(data)
-        except Exception as err:  # pylint: disable=broad-except
+        except Exception as err:
             if warn("0"):
                 _LOGGER.warning("Could not decode Speedwire %s", err)
             return
@@ -82,7 +82,7 @@ def connect_socket() -> socket.socket:
             "4s4s", socket.inet_aton(OPT.mcastgrp), socket.inet_aton(OPT.ipbind)
         )
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-    except BaseException:  # pylint: disable=broad-except
+    except BaseException:
         print("could not connect to multicast group or bind to given interface")
         sys.exit(1)
     return sock
@@ -91,17 +91,15 @@ def connect_socket() -> socket.socket:
 async def main() -> None:
     """Addon entry."""
     OPT.init_addon()
-
-    aid = "-".join(OPT.sma_device_lookup.values()).lower()
-    MQTT.availability_topic = f"{SMA_EM_TOPIC}/{aid}/available"
-
-    await MQTT.connect(OPT)
-
     if OPT.debug == 0:
         ic.disable()
-
     loop = asyncio.get_event_loop()
-    loop.set_debug(True)
+    loop.set_debug(OPT.debug > 1)
+
+    aid = sorted(d.ha_prefix for d in OPT.sma_devices)[0]
+    MQTT.availability_topic = f"{SMA_EM_TOPIC}/availability_{aid}"
+
+    await MQTT.connect(OPT)
 
     while True:
         sock = connect_socket()
@@ -109,7 +107,6 @@ async def main() -> None:
             MulticastServerProtocol,
             sock=sock,
         )
-
         try:
             await asyncio.sleep(OPT.reconnect_interval)
         finally:

@@ -11,12 +11,13 @@ from typing import Any
 def pretty_print_dict(data: dict[str, Any], indent: int = 0) -> dict[str, str]:
     """Pretty print a dict. Indent>0 will print the dict with indentation."""
     res = {}
-    for key in data:
+    for key, val in data.items():
         if key.endswith("unit"):
             continue
         unit = data.get(f"{key}unit", "")
-        res[key] = f"{data[key]} {unit}".strip()
+        res[key] = f"{val} {unit}".strip()
     if indent:
-        for key in sorted(res):
-            print(f"{' ' * indent}{key}: {res[key]}", file=stderr, flush=True)
+        ind = "\n" + (" " * indent)
+        result = ind.join(f"{k}: {res[k]}" for k in sorted(res))
+        print(f"\n{ind}{result}", file=stderr, flush=True)
     return res
