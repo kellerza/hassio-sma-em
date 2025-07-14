@@ -1,6 +1,12 @@
 # Changelog
 
-<https://github.com/kellerza/sma-em/releases>
+<https://github.com/kellerza/hassio-sma-em/releases>
+
+## **2025.7.x**
+
+- Update MQTT discovery to device based discovery (requires a MQTT LWT option with retain!)
+- Update container to s6 overlay
+- Build all containers
 
 ## **2025.1.14** - 2025-01-15
 

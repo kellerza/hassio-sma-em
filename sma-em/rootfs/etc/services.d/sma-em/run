@@ -1,3 +1,0 @@
-#!/command/execlineb -P
-
-uv run python -m ha_addon_sma

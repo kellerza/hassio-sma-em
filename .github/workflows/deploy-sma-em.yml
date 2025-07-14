@@ -277,32 +277,12 @@ jobs:
           digests=($(ls))
           echo "Found digests: ${digests[*]}"
 
-          # Create base manifest first
+          # Create base manifest
           echo "Creating base manifest..."
           retry_with_backoff docker buildx imagetools create \
             -t ${{ env.REGISTRY_IMAGE }}:${{ needs.information.outputs.version }} \
             -t ${{ env.REGISTRY_IMAGE }}:${{ needs.information.outputs.environment }} \
             $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' "${digests[@]}")
-
-          echo "Waiting 20 seconds after base manifest creation before processing platform-specific tags..."
-          sleep 20
-
-          # Process each platform separately
-          platforms="${{ steps.platforms_raw.outputs.value }}"
-          IFS=',' read -ra PLATFORM_ARRAY <<< "$platforms"
-
-          for PLATFORM in "${PLATFORM_ARRAY[@]}"; do
-            echo "Processing platform: $PLATFORM"
-
-            retry_with_backoff docker buildx imagetools create \
-              -t ${{ env.REGISTRY_IMAGE }}/${PLATFORM}:${{ needs.information.outputs.version }} \
-              -t ${{ env.REGISTRY_IMAGE }}/${PLATFORM}:${{ needs.information.outputs.environment }} \
-              $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' "${digests[@]}")
-
-            echo "Completed manifest for $PLATFORM"
-            echo "Waiting 10 seconds before processing next platform..."
-            sleep 10
-          done
 
       - name: Inspect image
         run: |
@@ -332,21 +312,8 @@ jobs:
 
           echo "Waiting 20 seconds for manifests to settle before starting inspections..."
           sleep 20
-
-          # Inspect base image first
           echo "Inspecting base image..."
           retry_with_backoff docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ needs.information.outputs.version }}
-
-          # Inspect each platform
-          platforms="${{ steps.platforms_raw.outputs.value }}"
-          IFS=',' read -ra PLATFORM_ARRAY <<< "$platforms"
-
-          for PLATFORM in "${PLATFORM_ARRAY[@]}"; do
-            echo "Inspecting platform: $PLATFORM"
-            retry_with_backoff docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}/${PLATFORM}:${{ needs.information.outputs.version }}
-            echo "Waiting 10 seconds before inspecting next platform..."
-            sleep 10
-          done
 
   publish_addon:
     name: 🆕 Update addon version to ${{ needs.information.outputs.version }}
