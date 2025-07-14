@@ -1,5 +1,5 @@
 name: SMA Energy Meter (developer version)
-version: "96dbc88"
+version: "7b3cd3d"
 image: ghcr.io/kellerza/hass-addon-sma-em
 slug: sma-em-dev
 description: Add-on for the SMA Energy meter
