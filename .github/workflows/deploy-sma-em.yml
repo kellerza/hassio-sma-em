@@ -14,7 +14,7 @@ on:
 env:
   ADDON_SLUG: sma-em
   ADDON_SLUG_EDGE: sma-em-dev
-  PKG_NAME: sma
+  PYTHON_PKG_NAME: sma
   REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/hass-addon-sma-em
 
 jobs:
@@ -88,9 +88,9 @@ jobs:
 
       - name: Prepare Files for Build
         run: |
-          mkdir -p ${{ env.ADDON_SLUG }}/${{ env.PKG_NAME }}
-          cp -r src ${{ env.ADDON_SLUG }}/${{ env.PKG_NAME }}/
-          cp pyproject.toml MANIFEST.in LICENSE README.md uv.lock ${{ env.ADDON_SLUG }}/${{ env.PKG_NAME }}/
+          mkdir -p ${{ env.ADDON_SLUG }}/${{ env.PYTHON_PKG_NAME }}
+          cp -r src ${{ env.ADDON_SLUG }}/${{ env.PYTHON_PKG_NAME }}/
+          cp pyproject.toml MANIFEST.in LICENSE README.md uv.lock ${{ env.ADDON_SLUG }}/${{ env.PYTHON_PKG_NAME }}/
 
       - name: Set up the correct base image based on platform
         run: |
