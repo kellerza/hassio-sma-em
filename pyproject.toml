@@ -24,9 +24,7 @@ classifiers = [
 requires-python = ">=3.12"
 dependencies = [
     "attrs>=25,<26",
-    "cattrs>=25,<26",
-    "mqtt-entity>=1,<2",
-    "pyyaml==6.0.2",
+    "mqtt-entity[options]>=1,<2",
     "icecream",
 ]
 
@@ -43,7 +41,6 @@ dev = [
     "pytest-cov",
     "pytest-github-actions-annotate-failures",
     "pytest",
-    "types-PyYAML",
 ]
 
 [tool.mypy]

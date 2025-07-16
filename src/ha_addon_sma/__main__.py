@@ -90,7 +90,7 @@ def connect_socket() -> socket.socket:
 
 async def main() -> None:
     """Addon entry."""
-    OPT.init_addon()
+    await OPT.init_addon()
     if OPT.debug == 0:
         ic.disable()
     loop = asyncio.get_event_loop()
