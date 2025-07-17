@@ -2,7 +2,7 @@ name: Trigger sync-remotes on kellerza/hass-addons
 
 on:
   workflow_run:
-    workflows: ["sync-remotes.yml"]
+    workflows: ["deploy-sma-em.yml"]
     branches: [main]
     types:
       - completed
@@ -15,6 +15,6 @@ jobs:
       - name: Invoke workflow "Sync add-ons from remote repositories"
         uses: the-actions-org/workflow-dispatch@v4
         with:
-          workflow: Sync add-ons from remote repositories
+          workflow: sync-remotes.yml
           token: ${{ secrets.HASS_ADDONS_PERSONAL_TOKEN }}
           wait-for-completion: false
