@@ -1,6 +1,22 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - "uv.lock"
+      - "pyproject.toml"
+      - "sma-em/**"
+      - "sma-em-dev/**"
+      - ".github/workflows/deploy-sma-em.yml"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "uv.lock"
+      - "pyproject.toml"
+      - "sma-em/**"
+      - "sma-em-dev/**"
+      - ".github/workflows/deploy-sma-em.yml"
+      - ".github/workflows/ci.yml"
 
 env:
   RUFF_VERSION: 0.12.2
