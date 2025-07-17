@@ -2,7 +2,7 @@ name: Trigger sync-remotes on kellerza/hass-addons
 
 on:
   workflow_run:
-    workflows: ["deploy-sma-em.yml"]
+    workflows: ["Deploy sma-em addon to ghcr.io"]
     branches: [main]
     types:
       - completed
