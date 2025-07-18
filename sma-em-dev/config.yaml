@@ -3,10 +3,11 @@ description: Add-on for the SMA Energy meter
 version: "9ddbddf"
 slug: sma-em-dev
 image: ghcr.io/kellerza/hass-addon-sma-em
-url: "https://github.com/kellerza/hassio-sma-em-dev"
+url: "https://github.com/kellerza/hassio-sma-em"
 services: ["mqtt:need"]
 hassio_api: true
 init: false
+host_network: true
 arch:
     - aarch64
     - amd64

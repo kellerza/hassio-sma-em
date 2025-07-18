@@ -1,12 +1,13 @@
 name: SMA Energy Meter
-version: "189fd64"
-image: ghcr.io/kellerza/hass-addon-sma-em
-slug: sma-em
 description: Add-on for the SMA Energy meter
-startup: services
-init: false
-boot: auto
+version: "9ddbddf"
+slug: sma-em
+image: ghcr.io/kellerza/hass-addon-sma-em
 url: "https://github.com/kellerza/hassio-sma-em"
+services: ["mqtt:need"]
+hassio_api: true
+init: false
+host_network: true
 arch:
     - aarch64
     - amd64
