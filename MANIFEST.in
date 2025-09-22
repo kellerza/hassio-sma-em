@@ -1,4 +1,3 @@
 include LICENSE README.md
-graft src/ha_addon_sma
-graft src/tests
+graft src
 recursive-exclude * *.py[co]

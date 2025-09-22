@@ -1,96 +1,93 @@
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
-[tool.setuptools]
-license-files = [] # https://github.com/astral-sh/uv/issues/9513
+requires = [ "setuptools", "setuptools-scm" ]
 
 [project]
 name = "sma"
 version = "0.0.2"
 description = "SMA-EM"
-keywords = ["sma", "energy", "power"]
 readme = "README.md"
-authors = [{ name = "Johann Kellerman", email = "kellerza@gmail.com" }]
+keywords = [ "energy", "power", "sma" ]
 license = { text = "Apache-2.0" }
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "Natural Language :: English",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-]
+authors = [ { name = "Johann Kellerman", email = "kellerza@gmail.com" } ]
 requires-python = ">=3.12"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Natural Language :: English",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
 dependencies = [
-    "attrs>=25,<26",
-    "mqtt-entity[options]>=1,<2",
-    "icecream",
+  "attrs>=25,<26",
+  "icecream",
+  "mqtt-entity[options]>=1,<2",
 ]
 
-[project.urls]
-Homepage = "https://kellerza.github.io/sma-em/"
-
-[project.optional-dependencies]
-
+urls.Homepage = "https://kellerza.github.io/sma-em/"
 
 [dependency-groups]
 dev = [
-    "mypy",
-    "pytest-asyncio",
-    "pytest-cov",
-    "pytest-github-actions-annotate-failures",
-    "pytest",
+  "codespell>=2.4.1",
+  "mypy",
+  "pyproject-fmt>=2.6",
+  "pytest",
+  "pytest-asyncio",
+  "pytest-cov",
+  "pytest-github-actions-annotate-failures",
 ]
 
-[tool.mypy]
-disallow_untyped_defs = true
-ignore_missing_imports = true
-exclude = ["build/.*", "sma-em-legacy/.*"]
-enable_error_code = ["ignore-without-code"]
+[tool.setuptools]
+license-files = [  ] # https://github.com/astral-sh/uv/issues/9513
+
+[tool.ruff]
+target-version = "py312"
+include = [ "src/**/*.py" ]
+exclude = [ "sma-em-legacy/*", "src/ha_addon_sma/speedwiredecoder.py" ]
+
+format.indent-style = "space"
+format.quote-style = "double"
+format.line-ending = "lf"
+format.skip-magic-trailing-comma = false
+format.docstring-code-line-length = "dynamic"
+format.docstring-code-format = true
+lint.select = [
+  "A",     # flake8-builtins
+  "ASYNC", # flake8-async
+  "B",     # bugbear
+  "D",     # pydocstyle
+  "E",     # pycodestyle
+  "F",     # pyflakes
+  "I",     # isort
+  "PGH",   # pygrep-hooks
+  "PIE",   # flake8-pie
+  "PL",    # pylint
+  "PTH",   # flake8-pathlib
+  "PYI",   # flake8-pyi
+  "RUF",   # ruff
+  "UP",    # pyupgrade
+  "W",     # pycodestyle
+]
+lint.ignore = [ "D203", "D213", "E203", "E501", "PLR2004" ]
+lint.pylint.max-args = 7
+
+[tool.codespell]
+skip = "data,*.map,package-lock.json,*.map"
+ignore-words-list = "HASS,hass,Hass,ist"
 
 [tool.pytest.ini_options]
-pythonpath = [".", "src"]
+pythonpath = [ ".", "src" ]
 filterwarnings = "ignore:.+@coroutine.+deprecated.+"
 testpaths = "src\tests"
-norecursedirs = [".git", "modules"]
+norecursedirs = [ ".git", "modules" ]
 log_cli = true
 log_cli_level = "DEBUG"
 asyncio_mode = "auto"
 addopts = "--cov=src --cov-report xml:cov.xml"
 
-[tool.ruff]
-target-version = "py312"
-include = ["src/**/*.py"]
-exclude= ["src/ha_addon_sma/speedwiredecoder.py", "sma-em-legacy/*"]
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "lf"
-docstring-code-format = true
-docstring-code-line-length = "dynamic"
-
-[tool.ruff.lint]
-select = [
-    "A",     # flake8-builtins
-    "ASYNC", # flake8-async
-    "B",     # bugbear
-    "D",     # pydocstyle
-    "E",     # pycodestyle
-    "F",     # pyflakes
-    "I",     # isort
-    "PGH",   # pygrep-hooks
-    "PIE",   # flake8-pie
-    "PL",    # pylint
-    "PTH",   # flake8-pathlib
-    "PYI",   # flake8-pyi
-    "RUF",   # ruff
-    "UP",    # pyupgrade
-    "W",     # pycodestyle
-]
-ignore = ["E203", "E501", "D203", "D213", "PLR2004"]
-
-[tool.ruff.lint.pylint]
-max-args = 7
+[tool.mypy]
+disallow_untyped_defs = true
+ignore_missing_imports = true
+exclude = [ "build/.*", "sma-em-legacy/.*" ]
+enable_error_code = [ "ignore-without-code" ]

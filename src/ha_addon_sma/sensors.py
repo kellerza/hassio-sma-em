@@ -26,7 +26,7 @@ class SWSensor:
     """0 = mean, 1 = max, -1 = min"""
     last_update: int = 0
     interval: int = 5
-    value: int | float = 0
+    value: int | float | str = 0
     values: list[int | float] = attr.field(factory=list)
     unit: str = ""
     mq_entity: MQTTSensorEntity = attr.field(default=None)
@@ -47,7 +47,7 @@ SENSORS: dict[str, list[SWSensor]] = {}
 SMA_EM_TOPIC = "SMA-EM/status"
 
 
-async def process_emparts(emparts: dict) -> None:  # noqa: PLR0912
+async def process_emparts(emparts: dict) -> None:  # noqa: PLR0912,PLR0915
     """Process emparts from the speedwire decoder."""
     if emparts["protocol"] not in [0x6069, 0x6081]:
         _LOGGER.info("Ignore protocol %s", hex(emparts["protocol"]))
@@ -104,6 +104,13 @@ async def process_emparts(emparts: dict) -> None:  # noqa: PLR0912
         if val is None:
             continue
 
+        # treat string values differently
+        if isinstance(sen.value, str):
+            if val != sen.value:
+                sen.value = str(val)
+                await sen.mq_entity.send_state(MQTT, sen.value)
+            continue
+
         publish = now >= sen.last_update + sen.interval
 
         # check threshold crossing
@@ -158,7 +165,9 @@ def get_sensors(*, definition: list[str], emparts: dict) -> list[SWSensor]:
             pretty_print_dict(emparts, indent=5)
             continue
 
-        sen = SWSensor(name=name, mod=mod, unit=emparts.get(f"{name}unit", ""))
+        unit = emparts.get(f"{name}unit", "")
+
+        sen = SWSensor(name=name, mod=mod, unit=unit)
         if sen.mod in ["min", "max"]:
             sen.interval = 60
         else:
@@ -168,6 +177,12 @@ def get_sensors(*, definition: list[str], emparts: dict) -> list[SWSensor]:
             except ValueError:
                 sen.mod = ""
                 sen.interval = 60
+
+        if not is_measurement(unit):
+            sen.mod = ""
+            sen.interval = 1
+            sen.value = str(emparts.get(name, ""))
+
         res.append(sen)
 
     ic(res)
