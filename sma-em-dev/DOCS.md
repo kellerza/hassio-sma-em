@@ -56,44 +56,25 @@
 
 The following list contains all possible values you can include in `FIELDS`
 
-```text
-pconsume,  pconsumecounter,
-psupply,   psupplycounter,
-qconsume,  qconsumecounter,
-qsupply,   qsupplycounter,
-sconsume,  sconsumecounter,
-ssupply,   ssupplycounter,
-cosphi,
-frequency,
-p1consume, p1consumecounter,
-p1supply,  p1supplycounter,
-q1consume, q1consumecounter,
-q1supply,  q1supplycounter,
-s1consume, s1consumecounter,
-s1supply,  s1supplycounter,
-i1,
-u1,
-cosphi1,
-p2consume, p2consumecounter,
-p2supply,  p2supplycounter,
-q2consume, q2consumecounter,
-q2supply,  q2supplycounter,
-s2consume, s2consumecounter,
-s2supply,  s2supplycounter,
-i2,
-u2,
-cosphi2,
-p3consume, p3consumecounter,
-p3supply,  p3supplycounter,
-q3consume, q3consumecounter,
-q3supply,  q3supplycounter,
-s3consume, s3consumecounter,
-s3supply,  s3supplycounter,
-i3,
-u3,
-cosphi3,
-speedwire-version
-```
+| Name              | Unit  | Description                                  | Individual phases                                    |
+|-------------------|-------|----------------------------------------------|------------------------------------------------------|
+| pconsume          | W     | power consumed from the grid                 | p1consume, p2consume, p3consume                      |
+| pconsumecounter   | kWh   | total energy consumed from the grid          | p1consumecounter, p2consumecounter, p3consumecounter |
+| psupply           | W     | power supplied to the grid                   | p1supply, p2supply, p3supply                         |
+| psupplycounter    | kWh   | total energy supplied to the grid            | p1supplycounter, p2supplycounter, p3supplycounter    |
+| qconsume          | VAr   | reactive power consumed from the grid        | q1consume, q2consume, q3consume                      |
+| qconsumecounter   | kVArh | total reactive energy consumed from the grid | q1consumecounter, q2consumecounter, q3consumecounter |
+| qsupply           | VAr   | reactive power supplied to the grid          | q1supply, q2supply, q3supply                         |
+| qsupplycounter    | kVArh | total reactive energy supplied to the grid   | q1supplycounter, q2supplycounter, q3supplycounter    |
+| sconsume          | VA    | apparent power consumed from the grid        | s1consume, s2consume, s3consume                      |
+| sconsumecounter   | kVAh  | total apparent energy consumed from the grid | s1consumecounter, s2consumecounter, s3consumecounter |
+| ssupply           | VA    | apparent power supplied to the grid          | s1supply, s2supply, s3supply                         |
+| ssupplycounter    | kVAh  | total apparent energy supplied to the grid   | s1supplycounter, s2supplycounter, s3supplycounter    |
+| cosphi            |       | power factor                                 | cosphi1, cosphi2, cosphi3                            |
+| frequency         | Hz    | grid frequency                               |                                                      |
+|                   | A     | current                                      | i1, i2, i3                                           |
+|                   | V     | voltage                                      | u1, u2, u3                                           |
+| speedwire-version |       | version of the speedwire protocol            |                                                      |
 
 > Note:
 >
@@ -101,7 +82,6 @@ speedwire-version
 > today. You are welcome to add some & create a PR [here](https://github.com/kellerza/hassio-sma-em/blob/main/sma-em/sensors.py#L21)
 >
 > prefix: p=real power, q=reactive power, s=apparent power, i=current, u=voltage
-> postfix: unit=the unit of the item, e.g. W, VA, VAr, Hz, A, V, kWh, kVArh, kVAh ...
 > postfix: counter=energy value (kWh, kVArh, kVAh)
 > without postfix counter=>power value (W, VAr, VA)
 

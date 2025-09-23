@@ -1,0 +1,36 @@
+configuration:
+  SMA_DEVICES:
+    name: SMA Devices
+    description: "
+      A list of SMA devices to monitor. Each device requires a SERIAL_NR and
+      HA_PREFIX.
+
+      Example:
+
+      ```yaml
+      SMA_DEVICES:
+        - SERIAL_NR: '123456789'
+          HA_PREFIX: 'SMA1'
+        - SERIAL_NR: '987654321'
+          HA_PREFIX: 'SMA2'
+      ```
+      "
+  FIELDS:
+    name: Fields
+    description: "
+      `speedwire-version`, `p1consume`, `p1consumecounter:max`, `u1`, `i1`, `p1feedin`,
+      "
+  MCASTGRP:
+    name: Multicast Group
+    description: "
+      The multicast group address to use for the speedwire connection.
+
+      Default: 239.12.255.254
+      "
+  IPBIND:
+    name: IP Bind
+    description: "
+      The IP address to bind to for the speedwire connection.
+
+      Default: 0.0.0.0
+      "

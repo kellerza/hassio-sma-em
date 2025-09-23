@@ -22,10 +22,7 @@ options:
         - p1consume
         - "p1consumecounter:max"
         - u1
-    MCASTGRP: 239.12.255.254
-    IPBIND: "0.0.0.0"
     THRESHOLD: 80
-    RECONNECT_INTERVAL: 86400
 schema:
     SMA_DEVICES:
         - SERIAL_NR: str

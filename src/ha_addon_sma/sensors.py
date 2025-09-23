@@ -6,14 +6,18 @@ import statistics
 import time
 
 import attr
-from icecream import ic  # type:ignore[import]
+from icecream import ic
 from mqtt_entity import MQTTClient, MQTTDevice, MQTTSensorEntity
 from mqtt_entity.helpers import hass_device_class
 
 from .helpers import pretty_print_dict
 from .options import OPT
 
-_LOGGER = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
+
+HA_MEASUREMENT = ("W", "V", "A", "Hz", "°C", "°F", "%", "Ah", "VA")
+HA_COUNTER = ("Wh", "kWhvarh", "kvarh")
+
 MQTT = MQTTClient(origin_name="SMA Energy Meter")
 
 
@@ -23,18 +27,42 @@ class SWSensor:
 
     name: str
     mod: str
-    """0 = mean, 1 = max, -1 = min"""
+    """Min,max, or a number to indicate seconds."""
     last_update: int = 0
-    interval: int = 5
+    interval: int = 60
     value: int | float | str = 0
     values: list[int | float] = attr.field(factory=list)
     unit: str = ""
     mq_entity: MQTTSensorEntity = attr.field(default=None)
 
+    def __post_attrs_init__(self) -> None:
+        """Post init."""
+        if self.name in ("speedwire-version",):
+            self.mod = ""
+            self.value = ""
+            return
+
+        if self.name.endswith("counter"):
+            if self.mod not in ("max", ""):
+                _LOG.warning("Counter sensor %s will only return the max", self.name)
+            self.mod = "max"
+            self.interval = 60
+            return
+
+        if self.mod in ["min", "max"]:
+            self.interval = 60
+        else:
+            try:
+                self.interval = int(self.mod)
+                self.mod = "avg"
+            except ValueError:
+                self.mod = ""
+                self.interval = 60
+
     @property
     def id(self) -> str:
         """Return the ID."""
-        if self.mod == "":
+        if self.mod == "" or self.name.endswith("counter"):
             return self.name
         if self.mod == "avg":
             return f"{self.name}_{self.interval}"
@@ -47,52 +75,16 @@ SENSORS: dict[str, list[SWSensor]] = {}
 SMA_EM_TOPIC = "SMA-EM/status"
 
 
-async def process_emparts(emparts: dict) -> None:  # noqa: PLR0912,PLR0915
+async def process_emparts(emparts: dict) -> None:  # noqa: PLR0912
     """Process emparts from the speedwire decoder."""
     if emparts["protocol"] not in [0x6069, 0x6081]:
-        _LOGGER.info("Ignore protocol %s", hex(emparts["protocol"]))
+        _LOG.info("Ignore protocol %s", hex(emparts["protocol"]))
         return
 
     serial = str(emparts["serial"])
-    if not SENSORS.get(serial):
-        # Discover the sensors
-        _LOGGER.info(
-            "Multicast frame received for SMA serial %s, discovered sensors:", serial
-        )
-        SENSORS[serial] = get_sensors(definition=OPT.fields, emparts=emparts)
-        _LOGGER.debug(
-            "Discover %s/%s sensors on SMA %s",
-            len(SENSORS[serial]),
-            len(OPT.fields),
-            serial,
-        )
-        ha_prefix = OPT.sma_device_lookup.get(serial, "sma")
-        mq_dev = MQTTDevice(
-            identifiers=[serial, f"sma_em_{serial}"],
-            # https://github.com/kellerza/sunsynk/issues/165
-            # name=f"{OPT.manufacturer} AInverter {serial_nr}",
-            name=ha_prefix,
-            # name="SMA Energy Meter",
-            model="Energy Meter",
-            manufacturer="SMA",
-            components={},
-        )
-        MQTT.devs.append(mq_dev)
-
-        for sen in SENSORS[serial]:
-            _LOGGER.info(" - %s every %ss", sen.id, sen.interval)
-            sen.mq_entity = MQTTSensorEntity(
-                name=sen.id,
-                device_class=hass_device_class(unit=sen.unit),
-                state_topic=f"{SMA_EM_TOPIC}/{serial}/{sen.id}",
-                unique_id=f"{serial}_{sen.id}",
-                unit_of_measurement=sen.unit,
-                state_class="measurement" if is_measurement(sen.unit) else "",
-                object_id=f"{ha_prefix} {sen.name}".lower(),
-                suggested_display_precision=1,
-            )
-
-        mq_dev.components = {s.id: s.mq_entity for sl in SENSORS.values() for s in sl}
+    if serial not in SENSORS:
+        _LOG.info("Multicast frame received for SMA %s", serial)
+        discover_sensors(definition=OPT.fields, emparts=emparts, serial=serial)
         await MQTT.publish_discovery_info()
         MQTT.monitor_homeassistant_status()
         await asyncio.sleep(5)
@@ -105,7 +97,7 @@ async def process_emparts(emparts: dict) -> None:  # noqa: PLR0912,PLR0915
             continue
 
         # treat string values differently
-        if isinstance(sen.value, str):
+        if isinstance(sen.value, str) or isinstance(val, str):
             if val != sen.value:
                 sen.value = str(val)
                 await sen.mq_entity.send_state(MQTT, sen.value)
@@ -149,41 +141,49 @@ async def process_emparts(emparts: dict) -> None:  # noqa: PLR0912,PLR0915
         await sen.mq_entity.send_state(MQTT, sen.value)
 
 
-def is_measurement(units: str) -> bool:
-    """Return True if the units are a measurement."""
-    return units in {"W", "V", "A", "Hz", "°C", "°F", "%", "Ah", "VA"}
-
-
-def get_sensors(*, definition: list[str], emparts: dict) -> list[SWSensor]:
+def discover_sensors(*, definition: list[str], emparts: dict, serial: str) -> None:
     """Create a list of all SWSensors from the definitions and emparts."""
-    res: list[SWSensor] = []
+    ha_prefix = OPT.sma_device_lookup.get(serial, "sma")
+    mq_dev = MQTTDevice(
+        identifiers=[serial, f"sma_em_{serial}"],
+        # https://github.com/kellerza/sunsynk/issues/165
+        # name=f"{OPT.manufacturer} AInverter {serial_nr}",
+        name=ha_prefix,  # name="SMA Energy Meter",
+        model="Energy Meter",
+        manufacturer="SMA",
+        components={},
+    )
+    MQTT.devs.append(mq_dev)
+    result: dict[str, SWSensor] = {}
+
     for sensor_def in definition:
         name, _, mod = sensor_def.partition(":")
-
         if name not in emparts:
-            _LOGGER.info("Unknown sensor: %s", name)
+            _LOG.info("Unknown sensor: %s", name)
             pretty_print_dict(emparts, indent=5)
             continue
 
-        unit = emparts.get(f"{name}unit", "")
+        sen = SWSensor(name=name, mod=mod, unit=emparts.get(f"{name}unit", ""))
 
-        sen = SWSensor(name=name, mod=mod, unit=unit)
-        if sen.mod in ["min", "max"]:
-            sen.interval = 60
-        else:
-            try:
-                sen.interval = int(mod)
-                sen.mod = "avg"
-            except ValueError:
-                sen.mod = ""
-                sen.interval = 60
+        if sen.id in result:
+            _LOG.warning("Sensor %s already exists for SMA %s", sen.id, serial)
+            continue
+        result[sen.id] = sen
 
-        if not is_measurement(unit):
-            sen.mod = ""
-            sen.interval = 1
-            sen.value = str(emparts.get(name, ""))
+        _LOG.info(" - %s (%s) every %ss ", sen.id, sen.unit, sen.interval)
+        sen.mq_entity = MQTTSensorEntity(
+            name=sen.id,
+            device_class=hass_device_class(unit=sen.unit),
+            state_topic=f"{SMA_EM_TOPIC}/{serial}/{sen.id}",
+            unique_id=f"{serial}_{sen.id}",
+            unit_of_measurement=sen.unit,
+            state_class="measurement" if sen.unit in HA_MEASUREMENT else "",
+            object_id=f"{ha_prefix} {sen.name}".lower(),
+            suggested_display_precision=1
+            if sen.unit in HA_MEASUREMENT or sen.unit in HA_COUNTER
+            else 0,
+        )
 
-        res.append(sen)
-
-    ic(res)
-    return res
+    mq_dev.components = {k: s.mq_entity for k, s in result.items()}
+    SENSORS[serial] = sss = list(result.values())
+    _LOG.debug("Added %s/%s sensors for SMA %s", len(sss), len(OPT.fields), serial)

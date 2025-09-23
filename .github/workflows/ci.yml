@@ -61,7 +61,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.12", "3.13"]
+        python-version: ["3.13"]
     env:
       PYTHON: ${{ matrix.python-version }}
     steps:

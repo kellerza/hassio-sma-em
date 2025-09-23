@@ -22,27 +22,19 @@ options:
         - p1consume
         - "p1consumecounter:max"
         - u1
-    MQTT_HOST: core-mosquitto
-    MQTT_PORT: 1883
-    MQTT_USERNAME: ""
-    MQTT_PASSWORD: ""
-    MCASTGRP: 239.12.255.254
-    IPBIND: "0.0.0.0"
     THRESHOLD: 80
-    RECONNECT_INTERVAL: 86400
-    DEBUG: 0
 schema:
     SMA_DEVICES:
         - SERIAL_NR: str
           HA_PREFIX: str
     FIELDS:
         - str
-    MQTT_HOST: str
-    MQTT_PORT: port
-    MQTT_USERNAME: str
-    MQTT_PASSWORD: password
     MCASTGRP: str?
     IPBIND: str?
     THRESHOLD: "int(10,1000)?"
     RECONNECT_INTERVAL: "int(60,86400)?"
-    DEBUG: int
+    DEBUG: int?
+    MQTT_HOST: str?
+    MQTT_PORT: port?
+    MQTT_USERNAME: str?
+    MQTT_PASSWORD: password?

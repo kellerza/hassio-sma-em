@@ -35,44 +35,25 @@
 
 The following list contains all possible `FIELD` names that you can use with the add-on
 
-```text
-pconsume,  pconsumeunit, pconsumecounter, pconsumecounterunit,
-psupply,   psupplyunit,  psupplycounter,  psupplycounterunit,
-qconsume,  qconsumeunit, qconsumecounter, qconsumecounterunit,
-qsupply,   qsupplyunit,  qsupplycounter,  qsupplycounterunit,
-sconsume,  sconsumeunit, sconsumecounter, sconsumecounterunit,
-ssupply,   ssupplyunit,  ssupplycounter,  ssupplycounterunit,
-cosphi,    cosphiunit,
-frequency, frequencyunit,
-p1consume, p1consumeunit, p1consumecounter, p1consumecounterunit,
-p1supply,  p1supplyunit,  p1supplycounter,  p1supplycounterunit,
-q1consume, q1consumeunit, q1consumecounter, q1consumecounterunit,
-q1supply,  q1supplyunit,  q1supplycounter,  q1supplycounterunit,
-s1consume, s1consumeunit, s1consumecounter, s1consumecounterunit,
-s1supply,  s1supplyunit,  s1supplycounter,  s1supplycounterunit,
-i1,        i1unit,
-u1,        u1unit,
-cosphi1,   cosphi1unit,
-p2consume, p2consumeunit, p2consumecounter, p2consumecounterunit,
-p2supply,  p2supplyunit,  p2supplycounter,  p2supplycounterunit,
-q2consume, q2consumeunit, q2consumecounter, q2consumecounterunit,
-q2supply,  q2supplyunit,  q2supplycounter,  q2supplycounterunit,
-s2consume, s2consumeunit, s2consumecounter, s2consumecounterunit,
-s2supply,  s2supplyunit,  s2supplycounter,  s2supplycounterunit,
-i2,        i2unit,
-u2,        u2unit,
-cosphi2,   cosphi2unit,
-p3consume, p3consumeunit, p3consumecounter, p3consumecounterunit,
-p3supply,  p3supplyunit,  p3supplycounter,  p3supplycounterunit,
-q3consume, q3consumeunit, q3consumecounter, q3consumecounterunit,
-q3supply,  q3supplyunit,  q3supplycounter,  q3supplycounterunit,
-s3consume, s3consumeunit, s3consumecounter, s3consumecounterunit,
-s3supply,  s3supplyunit,  s3supplycounter,  s3supplycounterunit,
-i3,        i3unit,
-u3,        u3unit,
-cosphi3,   cosphi3unit,
-speedwire-version
-```
+| Name              | Unit  | Description                                  | Individual phases                                    |
+|-------------------|-------|----------------------------------------------|------------------------------------------------------|
+| pconsume          | W     | power consumed from the grid                 | p1consume, p2consume, p3consume                      |
+| pconsumecounter   | kWh   | total energy consumed from the grid          | p1consumecounter, p2consumecounter, p3consumecounter |
+| psupply           | W     | power supplied to the grid                   | p1supply, p2supply, p3supply                         |
+| psupplycounter    | kWh   | total energy supplied to the grid            | p1supplycounter, p2supplycounter, p3supplycounter    |
+| qconsume          | VAr   | reactive power consumed from the grid        | q1consume, q2consume, q3consume                      |
+| qconsumecounter   | kVArh | total reactive energy consumed from the grid | q1consumecounter, q2consumecounter, q3consumecounter |
+| qsupply           | VAr   | reactive power supplied to the grid          | q1supply, q2supply, q3supply                         |
+| qsupplycounter    | kVArh | total reactive energy supplied to the grid   | q1supplycounter, q2supplycounter, q3supplycounter    |
+| sconsume          | VA    | apparent power consumed from the grid        | s1consume, s2consume, s3consume                      |
+| sconsumecounter   | kVAh  | total apparent energy consumed from the grid | s1consumecounter, s2consumecounter, s3consumecounter |
+| ssupply           | VA    | apparent power supplied to the grid          | s1supply, s2supply, s3supply                         |
+| ssupplycounter    | kVAh  | total apparent energy supplied to the grid   | s1supplycounter, s2supplycounter, s3supplycounter    |
+| cosphi            |       | power factor                                 | cosphi1, cosphi2, cosphi3                            |
+| frequency         | Hz    | grid frequency                               |                                                      |
+|                   | A     | current                                      | i1, i2, i3                                           |
+|                   | V     | voltage                                      | u1, u2, u3                                           |
+| speedwire-version |       | version of the speedwire protocol            |                                                      |
 
 > Note:
 >
@@ -80,7 +61,6 @@ speedwire-version
 > today. You are welcome to add some & create a PR [here](https://github.com/kellerza/hassio-sma-em/blob/main/sma-em/run.py#L21)
 >
 > prefix: p=real power, q=reactive power, s=apparent power, i=current, u=voltage
-> postfix: unit=the unit of the item, e.g. W, VA, VAr, Hz, A, V, kWh, kVArh, kVAh ...
 > postfix: counter=energy value (kWh, kVArh, kVAh)
 > without postfix counter=>power value (W, VAr, VA)
 
@@ -95,7 +75,7 @@ Assume `FIELDS=pconsume,pconsumecounter,u1`, and the auto-discovered sensors hav
 renamed according to the table below
 
 | Original name   | New name            | Description                     |
-| --------------- | ------------------- | ------------------------------- |
+|-----------------|---------------------|---------------------------------|
 | pconsume        | sma_grid_power_5s   | average power (W) last 1 minute |
 | pconsumecounter | sma_grid_total_5s   | Total kWh value every 5 minutes |
 | u1              | sma_grid_voltage_5s | average voltage last 30s        |

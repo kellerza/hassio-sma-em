@@ -25,13 +25,19 @@ class SmaOptions:
 class Options(MQTTOptions):
     """HASS Addon Options."""
 
-    mcastgrp: str = "239.12.255.254"
-    ipbind: str = "0.0.0.0"
+    mcastgrp: str = ""
+    ipbind: str = ""
     sma_devices: list[SmaOptions] = attrs.field(factory=list)
     fields: list[str] = attrs.field(factory=list)
     threshold: int = 80
     reconnect_interval: int = 86400
     debug: int = 0
+
+    def __attrs_post_init__(self) -> None:
+        """Post init."""
+        self.mcastgrp = self.mcastgrp or "239.12.255.254"
+        self.ipbind = self.ipbind or "0.0.0.0"
+        self.reconnect_interval = self.reconnect_interval or 86400
 
     @cached_property
     def sma_device_lookup(self) -> dict[str, str]:
