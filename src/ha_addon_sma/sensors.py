@@ -170,7 +170,7 @@ def discover_sensors(*, definition: list[str], emparts: dict, serial: str) -> No
             continue
         result[sen.id] = sen
 
-        _LOG.info(" - %s (%s) every %ss ", sen.id, sen.unit, sen.interval)
+        _LOG.info(" - %s (%s) %s every %ss ", sen.id, sen.unit, sen.mod, sen.interval)
         sen.mq_entity = MQTTSensorEntity(
             name=sen.id,
             device_class=hass_device_class(unit=sen.unit),
