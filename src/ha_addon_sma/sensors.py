@@ -43,9 +43,15 @@ class SWSensor:
             return
 
         if self.name.endswith("counter"):
-            if self.mod not in ("max", ""):
-                _LOG.warning("Counter sensor %s will only return the max", self.name)
-            self.mod = "max"
+            if self.mod == "max":
+                _LOG.warning("Counter sensor %s will only return the max.", self.name)
+            elif self.mod != "":
+                _LOG.warning(
+                    "Counter sensor %s will only return the max. Ignoring *%s*",
+                    self.name,
+                    self.mod,
+                )
+                self.mod = ""
             self.interval = 60
             return
 
@@ -62,11 +68,16 @@ class SWSensor:
     @property
     def id(self) -> str:
         """Return the ID."""
-        if self.mod == "" or self.name.endswith("counter"):
+        if self.mod == "":
             return self.name
         if self.mod == "avg":
             return f"{self.name}_{self.interval}"
         return f"{self.name}_{self.mod}"
+
+    @property
+    def is_max(self) -> bool:
+        """Return true if the sensor is a max sensor."""
+        return self.mod == "max" or self.name.endswith("counter")
 
 
 SENSORS: dict[str, list[SWSensor]] = {}
@@ -123,7 +134,7 @@ async def process_emparts(emparts: dict) -> None:  # noqa: PLR0912
         sen.last_update = now
         if sen.mod == "min":
             sen.value = min(sen.values)
-        if sen.mod == "max":
+        if sen.is_max:
             sen.value = max(sen.values)
         else:
             sen.value = statistics.mean(sen.values)
@@ -178,7 +189,7 @@ def discover_sensors(*, definition: list[str], emparts: dict, serial: str) -> No
             unique_id=f"{serial}_{sen.id}",
             unit_of_measurement=sen.unit,
             state_class="measurement" if sen.unit in HA_MEASUREMENT else "",
-            object_id=f"{ha_prefix} {sen.name}".lower(),
+            default_entity_id=f"sensor.{ha_prefix}_{sen.name}".lower(),
             suggested_display_precision=1
             if sen.unit in HA_MEASUREMENT or sen.unit in HA_COUNTER
             else 0,

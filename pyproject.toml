@@ -17,6 +17,7 @@ classifiers = [
   "Natural Language :: English",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
   "attrs>=25,<26",
@@ -28,20 +29,22 @@ urls.Homepage = "https://kellerza.github.io/sma-em/"
 
 [dependency-groups]
 dev = [
-  "codespell>=2.4.1",
+  "codespell",
   "mypy",
-  "pyproject-fmt>=2.6",
+  "pyproject-fmt",
   "pytest",
   "pytest-asyncio",
   "pytest-cov",
   "pytest-github-actions-annotate-failures",
 ]
 
+[tool.uv.build-backend]
+module-name = [ "ha_addon_sma" ]
+
 [tool.ruff]
 target-version = "py312"
 include = [ "src/**/*.py" ]
 exclude = [ "sma-em-legacy/*", "src/ha_addon_sma/speedwiredecoder.py" ]
-
 format.indent-style = "space"
 format.quote-style = "double"
 format.line-ending = "lf"
@@ -87,6 +90,3 @@ disallow_untyped_defs = true
 ignore_missing_imports = true
 exclude = [ "build/.*", "sma-em-legacy/.*" ]
 enable_error_code = [ "ignore-without-code" ]
-
-[tool.uv.build-backend]
-module-name = [ "ha_addon_sma" ]
