@@ -35,7 +35,7 @@ class SWSensor:
     unit: str = ""
     mq_entity: MQTTSensorEntity = attr.field(default=None)
 
-    def __post_attrs_init__(self) -> None:
+    def __attrs_post_init__(self) -> None:
         """Post init."""
         if self.name in ("speedwire-version",):
             self.mod = ""
@@ -68,11 +68,13 @@ class SWSensor:
     @property
     def id(self) -> str:
         """Return the ID."""
-        if self.mod == "":
-            return self.name
-        if self.mod == "avg":
-            return f"{self.name}_{self.interval}"
-        return f"{self.name}_{self.mod}"
+        name = self.name.replace(" ", "_").lower()
+        mod = self.mod.lower()
+        if mod == "":
+            return name
+        if mod == "avg":
+            return f"{name}_{self.interval}"
+        return f"{name}_{mod}"
 
     @property
     def is_max(self) -> bool:
@@ -111,6 +113,8 @@ async def process_emparts(emparts: dict) -> None:  # noqa: PLR0912
         if isinstance(sen.value, str) or isinstance(val, str):
             if val != sen.value:
                 sen.value = str(val)
+                if sen.value.startswith("R|"):
+                    sen.value = sen.value[2:]  # trim R| for the version string
                 await sen.mq_entity.send_state(MQTT, sen.value)
             continue
 
