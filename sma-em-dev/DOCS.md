@@ -1,4 +1,4 @@
-# Configuration (developer version)
+# Configuration
 
 ## Parameters
 
@@ -98,7 +98,7 @@ interval of the SMA Energy meter (1 second)
 Other modifiers
 
 | Modifier | Description                                                                                                                        |
-| -------- | :--------------------------------------------------------------------------------------------------------------------------------- |
+|----------|:-----------------------------------------------------------------------------------------------------------------------------------|
 | `:max`   | the maximum value over the last 60 seconds. <br/> Ideal for **counters** where you are typically interested only in the last value |
 | `:min`   | the minimum value over the last 60 seconds.                                                                                        |
 | `:<s>`   | any integer will allow you to get the average over the indicated amount of seconds. `:5`=5 seconds, `:60`=60 seconds               |
