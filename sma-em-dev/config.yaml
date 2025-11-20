@@ -1,6 +1,6 @@
 name: SMA Energy Meter (developer version)
 description: Add-on for the SMA Energy meter
-version: "6661c3b"
+version: "ced4e9c"
 slug: sma-em-dev
 image: ghcr.io/kellerza/hass-addon-sma-em
 url: "https://github.com/kellerza/hassio-sma-em"
