@@ -35,7 +35,7 @@ sma_units = {
 
 # map of all defined SMA channels
 # format: <channel_number>:(emparts_name>,<unit_actual>,<unit_total>)
-sma_channels = {
+sma_channels :dict[int, tuple[str, ...]] = {
     # totals
     1: ("pconsume", "W", "kWh"),
     2: ("psupply", "W", "kWh"),

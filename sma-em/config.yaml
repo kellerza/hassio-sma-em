@@ -11,9 +11,6 @@ host_network: true
 arch:
     - aarch64
     - amd64
-    - armhf
-    - armv7
-    - i386
 options:
     SMA_DEVICES:
         - SERIAL_NR: "007"

@@ -11,9 +11,6 @@ host_network: true
 arch:
     - aarch64
     - amd64
-    - armhf
-    - armv7
-    - i386
 options:
     SMA_DEVICES:
         - SERIAL_NR: "007"
@@ -34,6 +31,7 @@ schema:
     THRESHOLD: "int(10,1000)?"
     RECONNECT_INTERVAL: "int(60,86400)?"
     DEBUG: int?
+    MQTT_CUSTOM: bool?
     MQTT_HOST: str?
     MQTT_PORT: port?
     MQTT_USERNAME: str?

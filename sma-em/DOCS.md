@@ -79,7 +79,7 @@ The following list contains all possible values you can include in `FIELDS`
 > Note:
 >
 > Not all of these sensors units & types are correctly supported by auto-discovery
-> today. You are welcome to add some & create a PR [here](https://github.com/kellerza/hassio-sma-em/blob/main/sma-em/sensors.py#L21)
+> today. You are welcome to add some & create a PR [on the GitHub repo](https://github.com/kellerza/hassio-sma-em/blob/main/sma-em/sensors.py#L21)
 >
 > prefix: p=real power, q=reactive power, s=apparent power, i=current, u=voltage
 > postfix: counter=energy value (kWh, kVArh, kVAh)

@@ -1,15 +1,15 @@
 """Addon options."""
 
 import logging
+from dataclasses import dataclass, field
 from functools import cached_property
 
-import attrs
 from mqtt_entity.options import MQTTOptions
 
 _LOGGER = logging.getLogger(__name__)
 
 
-@attrs.define()
+@dataclass
 class SmaOptions:
     """Options for an SMA device."""
 
@@ -21,14 +21,14 @@ class SmaOptions:
         self.ha_prefix = self.ha_prefix.lower()
 
 
-@attrs.define(slots=True)
+@dataclass
 class Options(MQTTOptions):
     """HASS Addon Options."""
 
     mcastgrp: str = ""
     ipbind: str = ""
-    sma_devices: list[SmaOptions] = attrs.field(factory=list)
-    fields: list[str] = attrs.field(factory=list)
+    sma_devices: list[SmaOptions] = field(default_factory=list)
+    fields: list[str] = field(default_factory=list)
     threshold: int = 80
     reconnect_interval: int = 86400
     debug: int = 0
