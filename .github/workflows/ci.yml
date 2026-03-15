@@ -35,8 +35,8 @@ jobs:
           args: "format --check"
           version: ${{ env.RUFF_VERSION }}
 
-  mypy:
-    name: Check mypy
+  zuban:
+    name: Check zuban
     needs: [ruff]
     runs-on: ubuntu-latest
     steps:
@@ -51,8 +51,8 @@ jobs:
           version: ${{ env.UV_VERSION }}
       - name: Install Requirements
         run: uv sync --frozen --all-extras
-      - name: Run mypy
-        run: uv run mypy . --config-file pyproject.toml
+      - name: Run zuban
+        run: uv run zuban check src
 
   pytest:
     name: Run tests Python ${{ matrix.python-version }}
