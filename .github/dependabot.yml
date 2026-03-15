@@ -12,7 +12,9 @@ updates:
   - package-ecosystem: "uv"
     directory: "/"
     schedule:
-      interval: "monthly"
-    groups:
-      dev-deps:
-        dependency-type: "development"
+      interval: "weekly"
+    # groups:
+    #   dev-deps:
+    #     dependency-type: "development"
+    allow:
+      - dependency-type: "production"

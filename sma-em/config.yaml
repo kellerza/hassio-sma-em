@@ -31,6 +31,7 @@ schema:
     THRESHOLD: "int(10,1000)?"
     RECONNECT_INTERVAL: "int(60,86400)?"
     DEBUG: int?
+    MQTT_CUSTOM: bool?
     MQTT_HOST: str?
     MQTT_PORT: port?
     MQTT_USERNAME: str?
