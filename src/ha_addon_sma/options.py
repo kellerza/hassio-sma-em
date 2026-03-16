@@ -16,7 +16,7 @@ class SmaOptions:
     serial_nr: str = ""
     ha_prefix: str = ""
 
-    def __attrs_post_init__(self) -> None:
+    def __post_init__(self) -> None:
         """Post init."""
         self.ha_prefix = self.ha_prefix.lower()
 
@@ -33,7 +33,7 @@ class Options(MQTTOptions):
     reconnect_interval: int = 86400
     debug: int = 0
 
-    def __attrs_post_init__(self) -> None:
+    def __post_init__(self) -> None:
         """Post init."""
         self.mcastgrp = self.mcastgrp or "239.12.255.254"
         self.ipbind = self.ipbind or "0.0.0.0"

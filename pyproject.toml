@@ -29,7 +29,7 @@ urls.Homepage = "https://kellerza.github.io/sma-em/"
 [dependency-groups]
 dev = [
   "codespell",
-  "pyproject-fmt",
+  "pyproject-fmt<2.19",
   "pytest",
   "pytest-asyncio",
   "pytest-cov",

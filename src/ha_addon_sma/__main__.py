@@ -83,7 +83,11 @@ def connect_socket() -> socket.socket:
         )
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
     except BaseException:
-        print("could not connect to multicast group or bind to given interface")
+        _LOGGER.error(
+            "Could not connect to multicast group (%s) or bind to interface %s",
+            OPT.mcastgrp,
+            OPT.ipbind,
+        )
         sys.exit(1)
     return sock
 

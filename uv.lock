@@ -679,7 +679,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "codespell" },
-    { name = "pyproject-fmt" },
+    { name = "pyproject-fmt", specifier = "<2.19" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "pytest-cov" },

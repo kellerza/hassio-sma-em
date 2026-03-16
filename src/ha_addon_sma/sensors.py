@@ -4,8 +4,8 @@ import asyncio
 import logging
 import statistics
 import time
+from dataclasses import dataclass, field
 
-import attr
 from icecream import ic
 from mqtt_entity import MQTTClient, MQTTDevice, MQTTSensorEntity
 from mqtt_entity.helpers import hass_device_class
@@ -21,7 +21,7 @@ HA_COUNTER = ("Wh", "kWhvarh", "kvarh")
 MQTT = MQTTClient(origin_name="SMA Energy Meter")
 
 
-@attr.define
+@dataclass
 class SWSensor:
     """A speedwire sensor."""
 
@@ -31,11 +31,11 @@ class SWSensor:
     last_update: int = 0
     interval: int = 60
     value: int | float | str = 0
-    values: list[int | float] = attr.field(factory=list)
+    values: list[int | float] = field(default_factory=list)
     unit: str = ""
-    mq_entity: MQTTSensorEntity = attr.field(default=None)
+    mq_entity: MQTTSensorEntity = None  # type:ignore[assignment]
 
-    def __attrs_post_init__(self) -> None:
+    def __post_init__(self) -> None:
         """Post init."""
         if self.name in ("speedwire-version",):
             self.mod = ""
