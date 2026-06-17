@@ -22,7 +22,7 @@ classifiers = [
 ]
 dependencies = [
   "icecream",
-  "mqtt-entity[options]>=1,<2",
+  "mqtt-entity[options]>=1.1.10,<2",
 ]
 urls.Homepage = "https://kellerza.github.io/sma-em/"
 

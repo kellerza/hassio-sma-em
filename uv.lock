@@ -338,7 +338,7 @@ wheels = [
 
 [[package]]
 name = "mqtt-entity"
-version = "1.1.5"
+version = "1.1.10"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -346,9 +346,9 @@ dependencies = [
     { name = "colorlog" },
     { name = "paho-mqtt" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/53/dc/79f514dcaa5a9abeb6ecfe9f8ce00fe65b54ef3043699c2ee7f3a21bb047/mqtt_entity-1.1.5.tar.gz", hash = "sha256:87fc3e5e1ffbe4a378168b2b4e70b54abc4d582c2f28e90423369db9573cf583", size = 16864, upload-time = "2026-04-01T05:33:14.803Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c4/f6/288bd3070782d71d7c1d38d2b6e88b6bfce75f9c207b74451f48a3c783cb/mqtt_entity-1.1.10.tar.gz", hash = "sha256:676d34dc4630f85fa1ca1511448c148d52e986072d4ee3e8560a9ba488751501", size = 17991, upload-time = "2026-06-13T23:12:45.359Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/71/38/47435f1e893e832006ca70395cfc56fcb5c7ef6e82970780b363694eb64b/mqtt_entity-1.1.5-py3-none-any.whl", hash = "sha256:63dc3c6cb7fbfd67d5865c2675d3b64039daf1631d7c3e10e868a20605edbf50", size = 19842, upload-time = "2026-04-01T05:33:13.917Z" },
+    { url = "https://files.pythonhosted.org/packages/62/3c/9d7d600e383581fdbc85402063a324ba9861589834cbef03f3008bfc1b9b/mqtt_entity-1.1.10-py3-none-any.whl", hash = "sha256:e22cc0c08664082a4ed7fad443b303e68adc31f58b4f7a3e6fef3ba1887d9f20", size = 20853, upload-time = "2026-06-13T23:12:44.502Z" },
 ]
 
 [package.optional-dependencies]
@@ -673,7 +673,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "icecream" },
-    { name = "mqtt-entity", extras = ["options"], specifier = ">=1,<2" },
+    { name = "mqtt-entity", extras = ["options"], specifier = ">=1.1.10,<2" },
 ]
 
 [package.metadata.requires-dev]
