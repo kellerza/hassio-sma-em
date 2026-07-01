@@ -20,7 +20,7 @@ jobs:
     #secrets: inherit
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7
 
       - name: Get all files that have changed
         id: changed
