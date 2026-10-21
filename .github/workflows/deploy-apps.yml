@@ -43,6 +43,6 @@ jobs:
     uses: kellerza/hass-addons/.github/workflows/deployer2.yml@main
     secrets: inherit
     with:
-      app: sma-em
+      app-stable: sma-em
       app-edge: sma-em-dev
       publish: true
