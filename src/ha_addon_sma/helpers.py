@@ -8,6 +8,16 @@ from typing import Any
 # the dict contains pair of x and xunit, where x is the sensor name and xunit is the unit of the sensor.
 
 
+def inject_pgrid(emparts: dict[str, Any]) -> None:
+    """Set pgrid to pconsume - psupply when both are present (signed grid power, W)."""
+    pconsume = emparts.get("pconsume")
+    psupply = emparts.get("psupply")
+    if not isinstance(pconsume, (int, float)) or not isinstance(psupply, (int, float)):
+        return
+    emparts["pgrid"] = pconsume - psupply
+    emparts["pgridunit"] = emparts.get("pconsumeunit", "W")
+
+
 def pretty_print_dict(data: dict[str, Any], indent: int = 0) -> dict[str, str]:
     """Pretty print a dict. Indent>0 will print the dict with indentation."""
     res = {}

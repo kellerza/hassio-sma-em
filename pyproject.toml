@@ -22,19 +22,19 @@ classifiers = [
 ]
 dependencies = [
   "icecream",
-  "mqtt-entity[options]>=1.1.10,<2",
+  "mqtt-entity[options]",
 ]
 urls.Homepage = "https://kellerza.github.io/sma-em/"
 
 [dependency-groups]
 dev = [
   "codespell",
-  "pyproject-fmt<2.19",
+  "pyproject-fmt",
   "pytest",
   "pytest-asyncio",
   "pytest-cov",
   "pytest-github-actions-annotate-failures",
-  "zuban>=0.6.1",
+  "zuban",
 ]
 
 [tool.uv]

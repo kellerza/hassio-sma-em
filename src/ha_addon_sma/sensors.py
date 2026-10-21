@@ -10,7 +10,7 @@ from icecream import ic
 from mqtt_entity import MQTTClient, MQTTDevice, MQTTSensorEntity
 from mqtt_entity.helpers import hass_device_class
 
-from .helpers import pretty_print_dict
+from .helpers import inject_pgrid, pretty_print_dict
 from .options import OPT
 
 _LOG = logging.getLogger(__name__)
@@ -94,12 +94,14 @@ async def process_emparts(emparts: dict) -> None:  # noqa: PLR0912
         _LOG.info("Ignore protocol %s", hex(emparts["protocol"]))
         return
 
+    inject_pgrid(emparts)
+
     serial = str(emparts["serial"])
     if serial not in SENSORS:
         _LOG.info("Multicast frame received for SMA %s", serial)
         discover_sensors(definition=OPT.fields, emparts=emparts, serial=serial)
         await MQTT.publish_discovery_info()
-        MQTT.monitor_homeassistant_status()
+        await MQTT.monitor_homeassistant_status()
         await asyncio.sleep(5)
 
     push_later: list[tuple[SWSensor, int | float, int]] = []

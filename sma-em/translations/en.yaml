@@ -18,7 +18,7 @@ configuration:
   FIELDS:
     name: Fields
     description: "
-      `speedwire-version`, `p1consume`, `p1consumecounter:max`, `u1`, `i1`, `p1feedin`,
+      `speedwire-version`, `p1consume`, `p1consumecounter:max`, `pgrid`, `pgrid:1`, `u1`, `i1`, `p1feedin`,
       "
   MCASTGRP:
     name: Multicast Group
